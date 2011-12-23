@@ -28,8 +28,20 @@ key_signatures = {
 }
 
 # param pitch - A note of the form: {"st": 8  ,  "pitch": 67,  "dur": 4 ,  "keysig": -1,  "timesig": 12,  "fermata": 0},
-# return - the new value of note["base_pitch_n"]
+# return - the new value of note["norm_pitch"], an integer [0..15]
 def normalize_pitch(note):
   # Subtract the base pitch of the key signature from the note, then normalize it into the 0-15 range corresponding to 60-75
-  note["norm_pitch"] = (note[pitch] - key_signatures[note[keysig]]["base_pitch_n"]) % 16
+  note["norm_pitch"] = (note["pitch"] - key_signatures[note["keysig"]]["base_pitch_n"]) % 16
   return note["norm_pitch"]
+
+# param pitch - A note of the form: {"st": 8  ,  "pitch": 67,  "dur": 4 ,  "keysig": -1,  "timesig": 12,  "fermata": 0},
+# return - the new value of note["norm_dur"], a number [1/16..1]
+def normalize_dur(note):
+  note["norm_dur"] = (1.0*note["dur"])/note["timesig"]
+  return note["norm_dur"]
+
+# Calls normalize_pitch and normalize_dur
+# return - void
+def normalize(note)
+  normalize_pitch(note)
+  normalize_dur(note)
