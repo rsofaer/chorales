@@ -42,7 +42,7 @@ def probabalize(data):
 			sum += num
 
 		for p, num in numbers.iteritems():
-			pitchprob[opitch][p] = num/sum
+			pitchprob[opitch][p] = float(num)/float(sum)
 
 
 	return pitchprob
@@ -53,9 +53,10 @@ if __name__ == '__main__':
 	#run that shit
 	#pickle the result
 
-	data = {194: [{"st": 8  ,  "pitch": 67,  "dur": 4 ,  "keysig": -1,  "timesig": 12,  "fermata": 0}, {"st": 12  ,  "pitch": 69,  "dur": 8 ,  "keysig": -1,  "timesig": 12,  "fermata": 0}] }
+	#data = {194: [{"st": 8  ,  "pitch": 67,  "dur": 4 ,  "keysig": -1,  "timesig": 12,  "fermata": 0}, {"st": 12  ,  "pitch": 69,  "dur": 8 ,  "keysig": -1,  "timesig": 12,  "fermata": 0}] }
+	data = json.load(open("../dataset/chorales.json", "rb"))
 	probs = probabalize(data)
 
 	print probs
-	#pickle.dump(probs, open("noteProbs.p", "wb"))
+	pickle.dump(probs, open("noteProbs.p", "wb"))
 
