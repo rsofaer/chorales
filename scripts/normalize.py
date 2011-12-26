@@ -27,7 +27,7 @@ key_signatures = {
      4: {"base_name": "E", "base_pitch_n": 64}, 
 }
 
-# param pitch - A note of the form: {"st": 8  ,  "pitch": 67,  "dur": 4 ,  "keysig": -1,  "timesig": 12,  "fermata": 0},
+# param note - A note of the form: {"st": 8  ,  "pitch": 67,  "dur": 4 ,  "keysig": -1,  "timesig": 12,  "fermata": 0},
 # return - the new value of note["norm_pitch"], an integer [0..15]
 def normalize_pitch(note):
     # Subtract the base pitch of the key signature from the note, then normalize it into the 0-15 range corresponding to 60-75
@@ -39,11 +39,21 @@ def normalize_pitch(note):
     note["norm_pitch"] = norm_pitch
     return norm_pitch
 
-# param pitch - A note of the form: {"st": 8  ,  "pitch": 67,  "dur": 4 ,  "keysig": -1,  "timesig": 12,  "fermata": 0},
+# param note - A note of the form: {"st": 8  ,  "pitch": 67,  "dur": 4 ,  "keysig": -1,  "timesig": 12,  "fermata": 0},
 # return - the new value of note["norm_dur"], a number [1/16..1]
 def normalize_dur(note):
     note["norm_dur"] = (1.0*note["dur"])/note["timesig"]
     return note["norm_dur"]
+
+# param note - A note of the form: {"st": 8  ,  "pitch": 67,  "dur": 4 ,  "keysig": -1,  "timesig": 12,  "fermata": 0},
+# return - the new value of note["pitch"], an integet [60..75]
+def denormalize_pitch(note):
+    base_pitch = key_signatures[note["keysig"]]["base_pitch_n"] 
+    note["pitch"] = note["norm_pitch"] + base_pitch
+    if(note["pitch"] > 75):
+        note["pitch"] -= 12
+    return note["pitch"]
+
 
 # Calls normalize_pitch and normalize_dur
 # return - void
