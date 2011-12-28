@@ -9,23 +9,35 @@ Description: given an input that is a starting pitch and a number of notes, gene
 import sys
 import pickle
 import random
+import midify
+import normalize
 
 def generate(startPitch, duration):
     """self explanatory"""
-    sequence = [startPitch]
+    sequence = []
     probabilities = pickle.load(open("noteProbs.p", "rb"))
     lastNote = startPitch
+     #{"st": 8  ,  "pitch": 67,  "dur": 4 ,  "keysig": -1,  "timesig": 12,  "fermata": 0},
+    #lets just say the keysig is -1 for now
+
     for i in range(duration):
+        time = (i+1)*4
         note = singleGen(lastNote, probabilities)
-        sequence.append(note)
+        toAdd = {"st" : time , "pitch": note, "dur":4, "keysig":-1, "timesig": 12, "fermata" :0 }
+        toAdd ["pitch"] = normalize.denormalize_pitch(toAdd)
+        sequence.append(toAdd)
         lastNote = note
 
     print "Sequence is: "
     print sequence
+
     s = "sequence_%s_%s.p" % (startPitch, duration)
-    print "Writing note sequence to ", s
-    #dump the new sequence
+    #print "Writing note sequence to ", s
+
+    #midify the new sequence
+    midify.midify(sequence, "genoutput%s%s" % (startPitch, duration))
     #pickle.dump(sequence, open(s, "wb"))
+
 
 def singleGen(note, probs):
     """returns a probable next note"""
