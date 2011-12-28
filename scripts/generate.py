@@ -60,12 +60,14 @@ def distribution(pr):
         else:
             p[i] = 0
     def func(x):
-        #total = 0
-        #for x in range(0,20):
-        #    total += p.get(x)
-        #    if x < total:
-        #        return x
-        #return false
+        #much cleaner - tnx rafi
+        total = 0
+        for x in range(0,20):
+            total += p.get(x)
+            if x < total:
+                return x
+        return false
+        """#{{{
         if x < p.get(0):
             return 0
         if x < p.get(0) + p.get(1):
@@ -107,6 +109,7 @@ def distribution(pr):
         if x < p.get(0) + p.get(1) + p.get(2) + p.get(3) + p.get(4) + p.get(5) + p.get(6) + p.get(7) + p.get(8) + p.get(9) + p.get(10) + p.get(11) + p.get(12) + p.get(13) + p.get(14) + p.get(15)+ p.get(16)+ p.get(17)+ p.get(18)+ p.get(19):
             return 19
         return false
+        """#}}}
     return func
 #}}}
 
