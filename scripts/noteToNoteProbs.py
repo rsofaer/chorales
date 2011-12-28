@@ -66,4 +66,3 @@ if __name__ == '__main__':
 
     print probs
     pickle.dump(probs, open("noteProbs.p", "wb"))
-

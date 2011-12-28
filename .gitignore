@@ -1,3 +1,5 @@
 *.pyc
 *~
 *.swp
+dataset/midi/*.mid
+.DS_Store
