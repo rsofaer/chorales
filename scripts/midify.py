@@ -10,9 +10,9 @@ def midify(notes,filename='output'):
     MyMIDI = MIDIFile(len(notes))
 
     for index, note in enumerate(notes):
-        
+
         # Tracks are numbered from zero. Times are measured in beats.
-        track = index 
+        track = index
         time = 0
         tempo = 360 #in BPM
 
@@ -22,7 +22,7 @@ def midify(notes,filename='output'):
 
         #Set fermata duration
         fermata = 2
-        
+
         #Evaluate if fermata is true/false, assign 0 or nonzero value
         fermata = fermata*note[u'fermata']
 
@@ -35,12 +35,13 @@ def midify(notes,filename='output'):
         volume = 100
 
         #not dealt with: timesig, keysig
-        
+
         # Now add the note.
         MyMIDI.addNote(track,channel,pitch,time,duration,volume)
-        
+
 
     # And write it to disk.
+    print "writing midi to ../dataset/midi/"+filename+".mid"
     binfile = open('../dataset/midi/'+filename+".mid", 'wb')
     MyMIDI.writeFile(binfile)
     binfile.close()

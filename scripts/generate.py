@@ -54,7 +54,7 @@ def distribution(pr):
     "returns a distribution function"#{{{
     p = {}
     #sanitize for nonetypes
-    for i in range(0,15):
+    for i in range(0,19):
         if pr.get(i):
             p[i] = pr.get(i)
         else:
