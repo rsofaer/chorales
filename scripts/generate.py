@@ -60,6 +60,12 @@ def distribution(pr):
         else:
             p[i] = 0
     def func(x):
+        #total = 0
+        #for x in range(0,20):
+        #    total += p.get(x)
+        #    if x < total:
+        #        return x
+        #return false
         if x < p.get(0):
             return 0
         if x < p.get(0) + p.get(1):
