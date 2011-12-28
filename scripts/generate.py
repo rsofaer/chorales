@@ -112,6 +112,9 @@ def distribution(pr):
 
 
 if __name__ == '__main__':
+    if(len(sys.argv) < 3):
+        print "generate.py <start-pitch> <duration>"
+        exit()
     generate(int(sys.argv[1]), int(sys.argv[2]))
 
 
