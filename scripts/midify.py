@@ -20,17 +20,22 @@ def midify(notes,filename='output'):
         MyMIDI.addTrackName(track,time,"Sample Track "+str(track))
         MyMIDI.addTempo(track,time,tempo)
 
+        #Set fermata duration
+        fermata = 2
+        
+        #Evaluate if fermata is true/false, assign 0 or nonzero value
+        fermata = fermata*note[u'fermata']
 
         # Add a note. addNote expects the following information:
         #track = 0 #set above
         channel = 0
         pitch = note[u'pitch']
         time = note[u'st']
-        duration = note[u'dur']
+        duration = note[u'dur'] + fermata
         volume = 100
-        #need to encorporate fermata,
-        #and keysig and timesig (both not so useful for midi)
 
+        #not dealt with: timesig, keysig
+        
         # Now add the note.
         MyMIDI.addNote(track,channel,pitch,time,duration,volume)
         
