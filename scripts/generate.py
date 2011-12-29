@@ -29,7 +29,8 @@ def generate(startPitch, duration):
         lastNote = note
 
     print "Sequence is: "
-    print sequence
+    for note in sequence:
+        print note
 
     s = "sequence_%s_%s.p" % (startPitch, duration)
     #print "Writing note sequence to ", s
