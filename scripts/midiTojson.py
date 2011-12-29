@@ -3,6 +3,11 @@ import json
 import mingus
 import mingus.midi.MidiFileIn as mi
 
+'''
+File: midiTojson.py
+Author: AFlock
+Description: turns a midi to a json like we're used to. Requires mingus
+'''
 def main(file):
     try:
         composition = mi.MIDI_to_Composition(file)
