@@ -54,6 +54,7 @@ def probabalize(data):
             for h, note in enumerate(theVoice):
                 if h < len(theVoice) - 1:
                     nextNote = theVoice[h+1]
+                    #TODO once we have keysig inference, normalize these VV
                     #note = normalize.normalize_pitch(note)
                     #nextNote = normalize.normalize_pitch(nextNote)
                     note = note["pitch"]
@@ -105,15 +106,10 @@ OLD WHEY
 """
 
 if __name__ == '__main__':
-    #get Data
-    #normalize?
-    #run that shit
-    #pickle the result
 
-    ##data = {194: [{"st": 8  ,  "pitch": 67,  "dur": 4 ,  "keysig": -1,  "timesig": 12,  "fermata": 0}, {"st": 12  ,  "pitch": 69,  "dur": 8 ,  "keysig": -1,  "timesig": 12,  "fermata": 0}] }
+    #test Data
     #data = {"one" : [[{"st": 8  ,  "pitch": 67,  "dur": 4 ,  "keysig": -1,  "timesig": 12,  "fermata": 0}, {"st": 12  ,  "pitch": 69,  "dur": 8 ,  "keysig": -1,  "timesig": 12,  "fermata": 0}], [{"st": 8  ,  "pitch": 67,  "dur": 4 ,  "keysig": -1,  "timesig": 12,  "fermata": 0}, {"st": 12  ,  "pitch": 69,  "dur": 8 ,  "keysig": -1,  "timesig": 12,  "fermata": 0}], [{"st": 8  ,  "pitch": 67,  "dur": 4 ,  "keysig": -1,  "timesig": 12,  "fermata": 0}, {"st": 12  ,  "pitch": 69,  "dur": 8 ,  "keysig": -1,  "timesig": 12,  "fermata": 0}], [{"st": 8  ,  "pitch": 67,  "dur": 4 ,  "keysig": -1,  "timesig": 12,  "fermata": 0}, {"st": 12  ,  "pitch": 69,  "dur": 8 ,  "keysig": -1,  "timesig": 12,  "fermata": 0}]]}
     data = json.load(open("../dataset/fourPartJSON.json", "rb"))
     probs = probabalize(data)
 
     print probs
-    #pickle.dump(probs, open("noteProbs.p", "wb"))
