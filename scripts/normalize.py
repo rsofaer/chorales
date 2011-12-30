@@ -60,3 +60,10 @@ def denormalize_pitch(note):
 def normalize(note):
     normalize_pitch(note)
     normalize_dur(note)
+
+def normalize_sequence(sequence):
+    return map(normalize, sequence)
+
+# Takes a list of lists of notes and normalizes it.
+def normalize_chorale(chorale):
+    return map(normalize_sequence, chorale)
