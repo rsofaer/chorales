@@ -30,7 +30,7 @@ def main(file):
                     continue
                 pitch = pitch[0]
                 pitchNum = int(pitch)
-                noteDict = {"st":st, "pitch" : pitchNum, "dur" : dur, "keysig": '?', "timesig" : 12, "fermata": '?'}
+                noteDict = {"st":st, "pitch" : pitchNum, "dur" : dur, "keysig": None, "timesig" : None, "fermata": 0}
                 noteSequence.append(noteDict)
                 st += dur
         compositionList.append(noteSequence)
