@@ -16,6 +16,17 @@ class ChordEnergizer:
     def __init__(self, data):
         #self.data = map(normalizer.normalize_chorale(data))
         self.data = data
+        #self.count_chords()
+
+    def energy(chord):
+        melody_note = chord[0]
+        total_energy = 0
+        for i in range(1, len(chord)):
+            total_energy += pair_energy(melody_note, chord[i])
+        return total_energy
+
+    def pair_energy(pitch_one, pitch_two):
+        pass
 
     def count_chords(self):
         total_copitch_map = {}
@@ -25,16 +36,19 @@ class ChordEnergizer:
                 if not copitch in total_copitch_map:
                     total_copitch_map[copitch] = 0
                 total_copitch_map[copitch] += note_copitches[copitch]
-        return total_copitch_map
+        self.chordCounts = total_copitch_map
     
 def copitch_map(chorale):
     copitch_map = {}
-    for note in chorale[0]:
+    for note in chorale[1]:
+        base_pitch = note[pitch_key]
+        if not base_pitch in copitch_map:
+            copitch_map[base_pitch] = {}
         note_copitches = copitches(chorale, note)
-        for copitch in note_copitches.keys:
-            if not copitch in copitch_map:
-                copitch_map[copitch] = 0
-            copitch_map[copitch] += note_copitches[copitch]
+        for copitch in note_copitches.keys():
+            if not copitch in copitch_map[base_pitch]:
+                copitch_map[base_pitch][copitch] = 0
+            copitch_map[base_pitch][copitch] += note_copitches[copitch]
     return copitch_map
 
 # Given a note, find the pitches in the chorale that occur at the same time.
