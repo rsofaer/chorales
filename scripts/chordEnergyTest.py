@@ -11,12 +11,12 @@ class TestChordEnergy(unittest.TestCase):
         self.ce = e.ChordEnergizer([self.chorale])
 
     def testCopitches(self):
-        e.ChordEnergizer.copitches(self.chorale, self.chorale[0][0])
-        e.ChordEnergizer.copitches(self.chorale, self.chorale[0][4])
-        e.ChordEnergizer.copitches(self.chorale, self.chorale[3][6])
+        e.copitches(self.chorale, self.chorale[1][0])
+        e.copitches(self.chorale, self.chorale[1][4])
+        e.copitches(self.chorale, self.chorale[3][6])
 
     def testCopitchMap(self):
-        e.ChordEnergizer.copitch_map(self.chorale)
+        e.copitch_map(self.chorale)
 
     def testCountChords(self):
         self.ce.count_chords()
