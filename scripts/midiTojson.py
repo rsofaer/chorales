@@ -26,6 +26,8 @@ def main():
             #print tempo
             compositionList = []
             for voice in composition[0]:
+                if len(voice) is 0:
+                    continue
                 noteSequence = []
                 st = 0
                 for bar in voice:
@@ -41,6 +43,8 @@ def main():
                         st += dur
                 compositionList.append(noteSequence)
             allChorales[filename] = compositionList
+
+
 
 
     fname = "../dataset/fourPartJSON.json"

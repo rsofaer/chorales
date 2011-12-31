@@ -8,12 +8,12 @@ key_signatures = load(open('../dataset/key_distributions.json', 'r'))
 def add_notes(sig):
     n = sig["base_pitch_n"]
 
-    sig["notes"] = set([60+(((n-60))%16), 60+(((n-60)+2)%16), 
+    sig["notes"] = set([60+(((n-60))%16), 60+(((n-60)+2)%16),
                     60+(((n-60)+4)%16), 60+(((n-60)+5)%16),
-                    60+(((n-60)+7)%16), 60+(((n-60)+9)%16), 
-                    60+(((n-60)+11)%16), 60+(((n-60)+12)%16)]) 
+                    60+(((n-60)+7)%16), 60+(((n-60)+9)%16),
+                    60+(((n-60)+11)%16), 60+(((n-60)+12)%16)])
     sig["rank"] = 0
-''' 
+'''
 
 #return best keysig given a distribution
 def determine_key(l):
@@ -40,7 +40,7 @@ def get_keysig(voices):
     #only using melody to create distribution
     for note in voices[0]:
         l[note[u'pitch']-60] += 1.0
-        
+
     #normalizing
     s = sum(l)
     for i in range(len(l)):
@@ -65,22 +65,24 @@ if __name__ == '__main__':
     for key, value in key_signatures.iteritems():
         value['distro'] = []
 
-        
+
     #calculate distros, add to keysig
     for key, value in d.iteritems():
         l = [0.0]*20
         for note in value[0]:
             #print note
             l[note[u'pitch']-60] += 1.0
-        
+
         s = sum(l)
         for i in range(len(l)):
             l[i] = l[i]/s
-            
+
         #print value[0][0][u'keysig']
         key_signatures[unicode(value[0][0][u'keysig'])]['distro'].append(l)
 
     #combine all distros and normalize
+    #what if we didn't average them out?
+    #just keep them as is and do a closest-comparison for testing..?-AF
     for key, value in key_signatures.iteritems():
         new_l = [0.0]*20
         for distro in value['distro']:

@@ -9,6 +9,8 @@ File: noteToNoteProbs.py
 Author: AFlock
 Description: Given a JSON version of the chorales dataset,
     output a dictionary of probability distributions for the next note.
+    Re-tailored to suit new voiced chorales
+    Note: Only considering 4-voiced chorales
 '''
 
 def probabalize(data):
@@ -44,9 +46,9 @@ def probabalize(data):
             if j is 1:
                 name = "tenor"
             if j is 2:
-                name = "soprano"
-            if j is 3:
                 name = "alto"
+            if j is 3:
+                name = "soprano"
 
             theVoice = voices[number]
 
@@ -69,7 +71,7 @@ def probabalize(data):
 
     return counts
 
-"""
+"""#{{{
 OLD WHEY
 
     #for each chorale
@@ -103,12 +105,13 @@ OLD WHEY
 
     return pitchprob
 
-"""
+"""#}}}
 
 if __name__ == '__main__':
 
     #test Data
     #data = {"one" : [[{"st": 8  ,  "pitch": 67,  "dur": 4 ,  "keysig": -1,  "timesig": 12,  "fermata": 0}, {"st": 12  ,  "pitch": 69,  "dur": 8 ,  "keysig": -1,  "timesig": 12,  "fermata": 0}], [{"st": 8  ,  "pitch": 67,  "dur": 4 ,  "keysig": -1,  "timesig": 12,  "fermata": 0}, {"st": 12  ,  "pitch": 69,  "dur": 8 ,  "keysig": -1,  "timesig": 12,  "fermata": 0}], [{"st": 8  ,  "pitch": 67,  "dur": 4 ,  "keysig": -1,  "timesig": 12,  "fermata": 0}, {"st": 12  ,  "pitch": 69,  "dur": 8 ,  "keysig": -1,  "timesig": 12,  "fermata": 0}], [{"st": 8  ,  "pitch": 67,  "dur": 4 ,  "keysig": -1,  "timesig": 12,  "fermata": 0}, {"st": 12  ,  "pitch": 69,  "dur": 8 ,  "keysig": -1,  "timesig": 12,  "fermata": 0}]]}
+    #data = {"one" : [[{"st": 8  ,  "pitch": 67,  "dur": 4 ,  "keysig": -1,  "timesig": 12,  "fermata": 0}, {"st": 12  ,  "pitch": 69,  "dur": 8 ,  "keysig": -1,  "timesig": 12,  "fermata": 0}], [], [], []]}
     data = json.load(open("../dataset/fourPartJSON.json", "rb"))
     probs = probabalize(data)
 
