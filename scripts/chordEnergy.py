@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+import sys
 import json
 import normalize as normalizer
 
@@ -16,31 +17,37 @@ class ChordEnergizer:
     def __init__(self, data):
         #self.data = map(normalizer.normalize_chorale(data))
         self.data = data
-        #self.count_chords()
+        self.count_chords()
 
-    def energy(chord):
+    def energy(self, chord):
         melody_note = chord[0]
         total_energy = 0
         for i in range(1, len(chord)):
             total_energy += pair_energy(melody_note, chord[i])
         return total_energy
 
-    def pair_energy(pitch_one, pitch_two):
-        pass
+    def pair_energy(self, pitch_one, pitch_two):
+        copitches = self.chordCounts[pitch_one[pitch_key]]
+        if not pitch_two[pitch_key] in copitches:
+            return 99999999
+        return 1/self.chordCounts[pitch_one[pitch_key]][pitch_two[pitch_key]]
 
     def count_chords(self):
         total_copitch_map = {}
+        count = 0
         for chorale in self.data:
+            sys.stderr.write("ChordEnergy: processed " + str(count) +" chorales.\n")
+            count+=1
             chorale_copitches = copitch_map(chorale)
-            for copitch in total_copitch_map.keys():
+            for copitch in chorale_copitches.keys():
                 if not copitch in total_copitch_map:
-                    total_copitch_map[copitch] = 0
-                total_copitch_map[copitch] += note_copitches[copitch]
+                    total_copitch_map[copitch] = {}
+                add_hash(total_copitch_map[copitch], chorale_copitches[copitch])
         self.chordCounts = total_copitch_map
     
 def copitch_map(chorale):
     copitch_map = {}
-    for note in chorale[1]:
+    for note in chorale[0]:
         base_pitch = note[pitch_key]
         if not base_pitch in copitch_map:
             copitch_map[base_pitch] = {}
@@ -65,4 +72,8 @@ def copitches(chorale, note):
     copitches[note[pitch_key]] -= 1
     return copitches
 
-
+def add_hash(hash_one, hash_two):
+    for k in hash_two.keys():
+        if not k in hash_one:
+            hash_one[k] = 0
+        hash_one[k] += hash_two[k]
