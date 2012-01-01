@@ -5,43 +5,44 @@ midify() creates  a midi of the given notes, written to the optional filename
 notes is a chorale (a list of dictionaries, with attr. such as u'st', u'pitch',..)
 filename is the output name, excluding file extension. it'll be in dataset/midi/
 '''
-def midify(notes,filename='output'):
+def midify(voices,filename='output'):
     # Create the MIDIFile Object with len(notes) tracks
-    MyMIDI = MIDIFile(len(notes))
+    MyMIDI = MIDIFile(len(voices))
 
-    for index, note in enumerate(notes):
-
+    for jndex, notes in enumerate(voices):
         # Tracks are numbered from zero. Times are measured in beats.
-        track = index
+        track = jndex
         time = 0
         tempo = 360 #in BPM
-
+        
         # Add track name and tempo.
-        MyMIDI.addTrackName(track,time,"Sample Track "+str(track))
+        name = {0:'Soprano',1:'Alto',2:'Tenor',3:'Bass'}[jndex] #:o HAX
+        MyMIDI.addTrackName(track,time,name)
         MyMIDI.addTempo(track,time,tempo)
 
         #Set fermata duration
         fermata = 2
 
-        #Evaluate if fermata is true/false, assign 0 or nonzero value
-        fermata = fermata*note[u'fermata']
+        channel = jndex
+        for index, note in enumerate(notes):
+            
+            # Add a note. addNote expects the following information:
+            #track = 0 #set above
 
-        # Add a note. addNote expects the following information:
-        #track = 0 #set above
-        channel = 0
-        pitch = note[u'pitch']
-        time = note[u'st']
-        duration = note[u'dur'] + fermata
-        volume = 100
+            pitch = note[u'pitch']
+            time = note[u'st']
+            #fermata is added to duration if it's 1
+            duration = note[u'dur'] + (fermata*note[u'fermata'])
+            volume = 100
 
-        #not dealt with: timesig, keysig
+            #not dealt with: timesig, keysig
 
-        # Now add the note.
-        MyMIDI.addNote(track,channel,pitch,time,duration,volume)
+            # Now add the note.
+            MyMIDI.addNote(track,channel,pitch,time,duration,volume)
 
 
     # And write it to disk.
-    print "writing midi to ../dataset/midi/"+filename+".mid"
+    print "Writing MIDI to ../dataset/midi/"+filename+".mid"
     binfile = open('../dataset/midi/'+filename+".mid", 'wb')
     MyMIDI.writeFile(binfile)
     binfile.close()
@@ -55,4 +56,4 @@ if __name__ == '__main__':
     print 'Total Chorales: ' + str(len(data))
     for key, entry in data.items():
         print 'Generating Chorale ' + key
-        midify(entry,'output'+key)
+        midify([entry, [], [], []],'output'+key)
