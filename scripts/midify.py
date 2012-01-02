@@ -1,5 +1,6 @@
 #Import the library
 from midiutil.MidiFile import MIDIFile
+import sys
 '''
 midify() creates  a midi of the given notes, written to the optional filename
 notes is a chorale (a list of dictionaries, with attr. such as u'st', u'pitch',..)
@@ -14,7 +15,7 @@ def midify(voices,filename='output'):
         track = jndex
         time = 0
         tempo = 360 #in BPM
-        
+
         # Add track name and tempo.
         name = {0:'Soprano',1:'Alto',2:'Tenor',3:'Bass'}[jndex] #:o HAX
         MyMIDI.addTrackName(track,time,name)
@@ -25,7 +26,7 @@ def midify(voices,filename='output'):
 
         channel = jndex
         for index, note in enumerate(notes):
-            
+
             # Add a note. addNote expects the following information:
             #track = 0 #set above
 
@@ -49,11 +50,23 @@ def midify(voices,filename='output'):
 
 
 if __name__ == '__main__':
-    from json import load
+    if len(sys.argv) < 2:
+        print "midify.py <filename> || midify.py 'all' "
+        exit()
+    if sys.argv[1]:
+        from json import load
+        if sys.argv[1] is "all":
 
-    file = open("../dataset/chorales.json")
-    data = load(file)
-    print 'Total Chorales: ' + str(len(data))
-    for key, entry in data.items():
-        print 'Generating Chorale ' + key
-        midify([entry, [], [], []],'output'+key)
+            file = open("../dataset/chorales.json")
+            data = load(file)
+            print 'Total Chorales: ' + str(len(data))
+            for key, entry in data.items():
+                print 'Generating Chorale ' + key
+                midify([entry, [], [], []],'output'+key)
+
+        else:
+            fname = sys.argv[1]
+            f = open(fname, "rb")
+
+            data = load(f)
+            midify(data, 'output'+fname.split('/')[-1].split('.')[0])
