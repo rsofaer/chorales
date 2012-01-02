@@ -23,7 +23,7 @@ def main():
             #print composition
             tempo = composition[1]
 
-            #print tempo
+            print tempo
             compositionList = []
             for voice in composition[0]:
                 if len(voice) is 0:
@@ -38,7 +38,7 @@ def main():
                             continue
                         pitch = pitch[0]
                         pitchNum = int(pitch)
-                        noteDict = {"st":st, "pitch" : pitchNum, "dur" : dur, "keysig": None, "timesig" : None, "fermata": 0}
+						noteDict = {"st":st, "pitch" : pitchNum, "dur" : dur, "keysig": None, "timesig" : None, "tempo": tempo, "fermata": 0}
                         noteSequence.append(noteDict)
                         st += dur
                 compositionList.append(noteSequence)

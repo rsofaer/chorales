@@ -9,13 +9,19 @@ Description: given an input that is a starting pitch and a number of notes, gene
 import sys
 import pickle
 import random
-import midify
+import operator
+
+#our imports
 import normalize
+import midify
+
+#Global probabilites
+probabilities = pickle.load(open("noteProbs.p", "rb"))
+#TODO raw_distr (run noteToNoteProbs.py)
 
 def generate(startPitch, duration):
     """self explanatory"""
     sequence = []
-    probabilities = pickle.load(open("noteProbs.p", "rb"))
     lastNote = startPitch
      #{"st": 8  ,  "pitch": 67,  "dur": 4 ,  "keysig": -1,  "timesig": 12,  "fermata": 0},
     #lets just say the keysig is -1 for now
@@ -50,6 +56,29 @@ def singleGen(note, probs):
     result = distr(rand)
     return result
 
+def generateNoteList(note, x):
+    """
+    Returns a list of the X most likely next notes paired with their occurence in a tuple
+    [(note, occurence), (note, occurence), (etc)]
+    """
+
+    #sanitize for nonetypes
+    p = {}
+    #range of all entries?
+
+
+    #this is assuming normalization to range 0-19 has been done
+    for i in range(0,19):
+        if probabilities.get(note).get(i):
+            p[i] = probabilities.get(note).get(i)
+        else:
+            p[i] = 0
+
+    prob_list = sorted(p.iteritems(), key=operator.itemgetter(1))
+
+    print prob_list[-x:]
+    return prob_list[-x:]
+
 
 def distribution(pr):
     "returns a distribution function"#{{{
@@ -77,5 +106,6 @@ if __name__ == '__main__':
         print "generate.py <start-pitch> <duration>"
         exit()
     generate(int(sys.argv[1]), int(sys.argv[2]))
+    generateNoteList(int(sys.argv[1]), 4)
 
 

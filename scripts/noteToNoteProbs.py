@@ -41,6 +41,8 @@ def probabalize(data):
         if len(avgNums) is not 4:
             continue
         for j, number in enumerate(avgNums):
+            #you could do this
+            """
             if j is 0:
                 name = "bass"
             if j is 1:
@@ -49,6 +51,10 @@ def probabalize(data):
                 name = "alto"
             if j is 3:
                 name = "soprano"
+            """
+
+            #OR THIS
+            name = {0: "bass", 1: "tenor", 2: "alto", 3: "soprano"}[j]
 
             theVoice = voices[number]
 
@@ -65,7 +71,6 @@ def probabalize(data):
                     if not counts[name].get(note):
                         counts[name][note] = {}
 
-                    #I love python
                     counts[name][note][nextNote] = counts[name][note].get(nextNote, 0) + 1
 
 
