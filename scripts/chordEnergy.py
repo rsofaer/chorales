@@ -55,7 +55,7 @@ class ChordEnergizer:
                 add_hash(total_copitch_map[copitch], chorale_copitches[copitch])
         sys.stderr.write("\n")
         self.chordCounts = total_copitch_map
-    
+
 def copitch_map(chorale):
     copitch_map = {}
     for note in chorale[0]:
@@ -74,7 +74,7 @@ def copitches(chorale, note):
     copitches = {}
     for voice in chorale:
         for conote in voice:
-            if (((conote["st"] + conote["dur"]) > note["st"] and conote["st"] <= note["st"]) or 
+            if (((conote["st"] + conote["dur"]) > note["st"] and conote["st"] <= note["st"]) or
                  (conote["st"] < note["st"] + note["dur"]) and conote["st"] >= note["st"]):
                 if not conote[pitch_key] in copitches:
                     copitches[conote[pitch_key]] = 0
