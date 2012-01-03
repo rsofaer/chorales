@@ -19,18 +19,27 @@ class ChordEnergizer:
         self.count_chords()
 
     def energy(self, chord):
-        norm_chord = normalizer.normalize_sequence(chord)
+        if not type(chord[0]) is int and 'pitch' in chord[0]:
+            norm_chord = normalizer.normalize_sequence(chord)
+        else:
+            norm_chord = chord
         melody_note = norm_chord[0]
         total_energy = 0
         for i in range(1, len(chord)):
-            total_energy += pair_energy(melody_note, norm_chord[i])
+            total_energy += self.pair_energy(melody_note, norm_chord[i])
         return total_energy
 
     def pair_energy(self, pitch_one, pitch_two):
-        copitches = self.chordCounts[pitch_one[pitch_key]]
-        if not pitch_two[pitch_key] in copitches:
+        if type(pitch_one) is int:
+            pitch_one_i = pitch_one
+            pitch_two_i = pitch_two
+        else:
+            pitch_one_i = pitch_one[pitch_key]
+            pitch_two_i = pitch_two[pitch_key]
+        copitches = self.chordCounts[pitch_one_i]
+        if not pitch_two_i in copitches:
             return 99999999
-        return 1.0/self.chordCounts[pitch_one[pitch_key]][pitch_two[pitch_key]]
+        return 1.0/self.chordCounts[pitch_one_i][pitch_two_i]
 
     def count_chords(self):
         total_copitch_map = {}

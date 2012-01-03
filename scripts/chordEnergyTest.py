@@ -32,10 +32,10 @@ class TestChordEnergy(unittest.TestCase):
         self.ce = e.ChordEnergizer(self.chorales)
         self.assertTrue(self.ce.pair_energy({e.pitch_key: 0}, {e.pitch_key: 1}) >
                         self.ce.pair_energy({e.pitch_key: 0}, {e.pitch_key: 3}))
-        
-    def testChordEnergy(self):
-        self.chorales = data
-        self.ce = e.ChordEnergizer(self.chorales)
+
+        self.assertTrue(self.ce.pair_energy({e.pitch_key: 0}, {e.pitch_key: 3}) == self.ce.pair_energy(0,3))
+
+        self.assertTrue(self.ce.energy([0,1,2,3]) == self.ce.energy([{e.pitch_key: 0},{e.pitch_key: 1},{e.pitch_key: 2},{e.pitch_key: 3}]))
 
 if __name__ == '__main__':
     unittest.main()
