@@ -10,17 +10,23 @@ import sys
 import pickle
 import random
 import operator
+import json
+
 
 #our imports
 import normalize
 import midify
+from noteToNoteProbs import probabalize
 
 #Global probabilites
-probabilities = pickle.load(open("noteProbs.p", "rb"))
+#probabilities = pickle.load(open("noteProbs.p", "rb"))
+#get prob distribution
+data = json.load(open("../dataset/cleandata.json", "rb"))
+probabilities = probabalize(data)
 #TODO raw_distr (run noteToNoteProbs.py)
 
 def generate(startPitch, duration):
-    """self explanatory"""
+    """generate a sequence of notes note: doesn't quite work since we need to incorporate voice'"""
     sequence = []
     lastNote = startPitch
      #{"st": 8  ,  "pitch": 67,  "dur": 4 ,  "keysig": -1,  "timesig": 12,  "fermata": 0},
@@ -56,27 +62,35 @@ def singleGen(note, probs):
     result = distr(rand)
     return result
 
-def generateNoteList(note, x):
+def generateNoteList(voice, note, x):
     """
     Returns a list of the X most likely next notes paired with their occurence in a tuple
+    needs a voice to generate on
     [(note, occurence), (note, occurence), (etc)]
     """
 
-    #sanitize for nonetypes
     p = {}
-    #range of all entries?
 
+    #get prob distribution
+    #data = json.load(open("../dataset/cleandata.json", "rb"))
+    #probabilities = probabalize(data)
 
+    print probabilities.get(voice).get(note)
+    #sanitize for nonetypes
     #this is assuming normalization to range 0-19 has been done
     for i in range(0,19):
-        if probabilities.get(note).get(i):
-            p[i] = probabilities.get(note).get(i)
+        if probabilities.get(voice).get(note).get(i):
+            p[i] = probabilities.get(voice).get(note).get(i)
         else:
             p[i] = 0
-
     prob_list = sorted(p.iteritems(), key=operator.itemgetter(1))
+    #turn it into actual probs
+    for i in range(len(prob_list)):
+        if prob_list[i][1] is 0:
+            prob_list[i] = (prob_list[i][0], 100000000)
+        prob_list[i] = (prob_list[i][0], 1/float(prob_list[i][1]))
 
-    print prob_list[-x:]
+    #print prob_list[-x:]
     return prob_list[-x:]
 
 
@@ -93,7 +107,7 @@ def distribution(pr):
         #much cleaner
         total = 0
         for i in range(0,20):
-            total += p.get(i)
+            total += p.get(i, 0)
             if x < total:
                 return i
         return false
@@ -105,7 +119,8 @@ if __name__ == '__main__':
     if(len(sys.argv) < 3):
         print "generate.py <start-pitch> <duration>"
         exit()
-    generate(int(sys.argv[1]), int(sys.argv[2]))
-    generateNoteList(int(sys.argv[1]), 4)
+    #generate(int(sys.argv[1]), int(sys.argv[2]))
+    print generateNoteList("tenor", int(sys.argv[1]), 4)
+
 
 

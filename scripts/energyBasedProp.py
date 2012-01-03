@@ -6,7 +6,11 @@ Author: AF
 Description: use energies to generate sequences and single
 '''
 
+from generate import generateNoteList
 from itertools import product
+import chordEnergy as ce
+
+import json
 import operator
 
 """Constants to scale energy by"""
@@ -23,22 +27,31 @@ def genChord(startChord):
     # this will hold all of our chords and their energies
     total_energies = {}
 
+    #get a chord energizer
+    data = json.load(open("../dataset/cleandata.json", "rb"))
+    c = ce.ChordEnergizer(data)
+
     #for each voice, get a list of probable next notes
     nexts = []
     for i, note in enumerate(startChord):
-        nexts.append(generateNoteList(note, 4))
+        voice = {0: "bass", 1: "tenor", 2: "alto", 3: "soprano"}[i]
+        nexts.append(generateNoteList(voice, note, 4))
 
     #now every combination of those along with their combined "energy"
     possible = []
-        for combo in a:
-            chord = [nexts[0]combo[0][0], nexts[1]combo[1][0], nexts[2]combo[2][0], nexts[3]combo[3][0]]
-            energy = (nexts[0]combo[0][1]+ nexts[1]combo[1][1]+ nexts[2]combo[2][1]+ nexts[3]combo[3][1])
-            possible.append((chord, energy))
+
+    p = product([0,1,2,3], repeat = 4)
+
+    for combo in p:
+        print combo
+        chord = [nexts[0][combo[0]][0], nexts[1][combo[1]][0], nexts[2][combo[2]][0], nexts[3][combo[3]][0]]
+        energy = (nexts[0][combo[0]][1]+ nexts[1][combo[1]][1]+ nexts[2][combo[2]][1]+ nexts[3][combo[3]][1])
+        possible.append((chord, energy))
 
 
     #now figure out the liklihood for all of these chords
     for chord, energy in possible:
-        total_energies[chord] = (ALPHA * energy) + (BETA * energy(chord))
+        total_energies[chord] = (ALPHA * energy) + (BETA * c.energy(chord))
 
     #now choose the lowest energy chord
 
@@ -49,7 +62,7 @@ def genChord(startChord):
 
 
 if __name__ == '__main__':
-    print genChord[10,20,30,40]
+    print genChord([0,4,3,1])
 
 
 

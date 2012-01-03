@@ -14,7 +14,6 @@ def genJson(file):
     except Error as e:
         print e
 
-    #print composition
 
     tempo = composition[1]
     print tempo
