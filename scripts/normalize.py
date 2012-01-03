@@ -31,6 +31,7 @@ key_signatures = {
 # return - the new value of note["norm_pitch"], an integer [0..15]
 def normalize_pitch(note):
     # Subtract the base pitch of the key signature from the note, then normalize it into the 0-15 range corresponding to 60-75
+    print note
     norm_pitch = note["pitch"]
     base_pitch = key_signatures[note["keysig"]]["base_pitch_n"]
     while(norm_pitch < base_pitch):

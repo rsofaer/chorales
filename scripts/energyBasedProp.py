@@ -17,6 +17,9 @@ import operator
 ALPHA = 0.5 # for the importance of the note-to-note energies
 BETA  = 0.5 # for the importance of the chordal energy
 
+def hasKeySig(chorale):
+    return not chorale[0][0]["keysig"] == None
+
 
 def genChord(startChord):
     """
@@ -28,7 +31,8 @@ def genChord(startChord):
     total_energies = {}
 
     #get a chord energizer
-    data = json.load(open("../dataset/cleandata.json", "rb"))
+    data = json.load(open("../dataset/cleandata.json", "rb")).values()
+    data = filter(hasKeySig, data)
     c = ce.ChordEnergizer(data)
 
     #for each voice, get a list of probable next notes
@@ -51,6 +55,7 @@ def genChord(startChord):
 
     #now figure out the liklihood for all of these chords
     for chord, energy in possible:
+        print chord
         total_energies[chord] = (ALPHA * energy) + (BETA * c.energy(chord))
 
     #now choose the lowest energy chord

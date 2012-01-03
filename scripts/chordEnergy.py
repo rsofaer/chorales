@@ -19,6 +19,7 @@ class ChordEnergizer:
         self.count_chords()
 
     def energy(self, chord):
+        print chord
         norm_chord = normalizer.normalize_sequence(chord)
         melody_note = norm_chord[0]
         total_energy = 0
