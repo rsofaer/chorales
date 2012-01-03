@@ -59,7 +59,8 @@ def denormalize_pitch(note):
 # return - void
 def normalize(note):
     normalize_pitch(note)
-    normalize_dur(note)
+    #normalize_dur(note)
+    return note
 
 def normalize_sequence(sequence):
     return map(normalize, sequence)

@@ -11,38 +11,40 @@ Description: Given a JSON version of the chorales dataset,
     provide functions for calculating the energy/likelihood of a chord.
 '''
 
-pitch_key = "pitch"
+pitch_key = "norm_pitch"
 
 class ChordEnergizer:
     def __init__(self, data):
-        #self.data = map(normalizer.normalize_chorale(data))
-        self.data = data
+        self.data = map(normalizer.normalize_chorale,data)
         self.count_chords()
 
     def energy(self, chord):
-        melody_note = chord[0]
+        norm_chord = normalizer.normalize_sequence(chord)
+        melody_note = norm_chord[0]
         total_energy = 0
         for i in range(1, len(chord)):
-            total_energy += pair_energy(melody_note, chord[i])
+            total_energy += pair_energy(melody_note, norm_chord[i])
         return total_energy
 
     def pair_energy(self, pitch_one, pitch_two):
         copitches = self.chordCounts[pitch_one[pitch_key]]
         if not pitch_two[pitch_key] in copitches:
             return 99999999
-        return 1/self.chordCounts[pitch_one[pitch_key]][pitch_two[pitch_key]]
+        return 1.0/self.chordCounts[pitch_one[pitch_key]][pitch_two[pitch_key]]
 
     def count_chords(self):
         total_copitch_map = {}
         count = 0
+        sys.stderr.write("ChordEnergy processing chorales: ")
         for chorale in self.data:
-            sys.stderr.write("ChordEnergy: processed " + str(count) +" chorales.\n")
+            sys.stderr.write(".")
             count+=1
             chorale_copitches = copitch_map(chorale)
             for copitch in chorale_copitches.keys():
                 if not copitch in total_copitch_map:
                     total_copitch_map[copitch] = {}
                 add_hash(total_copitch_map[copitch], chorale_copitches[copitch])
+        sys.stderr.write("\n")
         self.chordCounts = total_copitch_map
 
 def copitch_map(chorale):

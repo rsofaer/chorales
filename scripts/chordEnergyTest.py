@@ -5,6 +5,11 @@ import json
 import unittest
 
 data = json.load(open("../dataset/cleandata.json", "rb")).values()
+def hasKeySig(chorale):
+    return not chorale[0][0]["keysig"] == None
+
+data = filter(hasKeySig, data)
+
 class TestChordEnergy(unittest.TestCase):
 
     def setUp(self):
@@ -25,10 +30,12 @@ class TestChordEnergy(unittest.TestCase):
     def testChordPairEnergy(self):
         self.chorales = data
         self.ce = e.ChordEnergizer(self.chorales)
-        print self.ce.chordCounts
-        print self.ce.chordCounts[60]
-        self.assertTrue(self.ce.pair_energy({e.pitch_key: 60}, {e.pitch_key: 61}) >
-                        self.ce.pair_energy({e.pitch_key: 60}, {e.pitch_key: 63}))
+        self.assertTrue(self.ce.pair_energy({e.pitch_key: 0}, {e.pitch_key: 1}) >
+                        self.ce.pair_energy({e.pitch_key: 0}, {e.pitch_key: 3}))
+        
+    def testChordEnergy(self):
+        self.chorales = data
+        self.ce = e.ChordEnergizer(self.chorales)
 
 if __name__ == '__main__':
     unittest.main()
