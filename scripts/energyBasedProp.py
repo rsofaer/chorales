@@ -38,7 +38,7 @@ def genChord(startChord):
     #for each voice, get a list of probable next notes
     nexts = []
     for i, note in enumerate(startChord):
-        voice = {0: "bass", 1: "tenor", 2: "alto", 3: "soprano"}[i]
+        voice = {3: "bass", 2: "tenor", 1: "alto", 0: "soprano"}[i]
         nexts.append(generateNoteList(voice, note, 4))
 
     #now every combination of those along with their combined "energy"
