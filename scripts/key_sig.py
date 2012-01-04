@@ -2,6 +2,10 @@ from json import load, dump
 
 #Global key_signatures with distributions
 key_signatures = load(open('../dataset/key_distributions.json', 'r'))
+#Base note for note range
+base = 60
+#Range of notes from the base
+range = 19
 
 #Unused
 '''
@@ -39,7 +43,7 @@ def get_keysig(voices):
 
     #only using melody to create distribution
     for note in voices[0]:
-        l[note[u'pitch']-60] += 1.0
+        l[note[u'pitch']-base] += 1.0
 
     #normalizing
     s = sum(l)
@@ -52,15 +56,16 @@ def get_keysig(voices):
 #Main function creates distribution JSON for keysigs, then tests
 if __name__ == '__main__':
 
-    f = open('../dataset/chorales.json', 'r')
+    # f = open('../dataset/chorales.json', 'r')
+    f = open('../dataset/cleandata.json', 'r')
     d = load(f)
 
     print key_signatures
-
+    '''
     #make it like new format
     for key, value in d.iteritems():
         d[key] = [value,[],[],[]]
-
+    '''
     #initialize (or empty) distro
     for key, value in key_signatures.iteritems():
         value['distro'] = []
@@ -71,7 +76,7 @@ if __name__ == '__main__':
         l = [0.0]*20
         for note in value[0]:
             #print note
-            l[note[u'pitch']-60] += 1.0
+            l[note[u'pitch']-base] += 1.0
 
         s = sum(l)
         for i in range(len(l)):

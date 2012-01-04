@@ -55,12 +55,12 @@ def genChord(startChord):
 
     #now figure out the liklihood for all of these chords
     for chord, energy in possible:
-        print chord
-        total_energies[chord] = (ALPHA * energy) + (BETA * c.energy(chord))
+        print str(chord) + ":::" + str(energy)
+        total_energies[tuple(chord)] = (ALPHA * energy) + (BETA * c.energy(chord))
 
     #now choose the lowest energy chord
 
-    chosen  = sorted(total_energies.iteritems(), key=operator.itemgetter(1))[0][0]
+    chosen  = sorted(total_energies.iteritems(), key=operator.itemgetter(1))[0]
 
     return chosen
 
