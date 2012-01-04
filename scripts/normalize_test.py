@@ -1,5 +1,6 @@
 import normalize as n
 import unittest
+import json
 
 class TestNormalize(unittest.TestCase):
 
@@ -24,6 +25,10 @@ class TestNormalize(unittest.TestCase):
         
         self.assertEqual(n.normalize_dur(self.g_in_f), 1.0/4)
         self.assertEqual(self.g_in_f["norm_dur"], 1.0/4)
+
+    def test_chorales(self):
+        data = json.load(open("../dataset/cleandata.json", "rb")).values()
+        n.normalize_chorale(data[0])
 
 if __name__ == '__main__':
     unittest.main()

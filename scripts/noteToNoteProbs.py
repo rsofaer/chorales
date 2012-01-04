@@ -22,7 +22,7 @@ def probabalize(data):
     """
 
     for name, chorale in data.iteritems():
-        print name
+        #print name
         voices = {}
         avgNums = []
 
@@ -42,7 +42,6 @@ def probabalize(data):
             continue
         for j, number in enumerate(avgNums):
             #you could do this
-            """
             if j is 0:
                 name = "bass"
             if j is 1:
@@ -51,10 +50,9 @@ def probabalize(data):
                 name = "alto"
             if j is 3:
                 name = "soprano"
-            """
 
             #OR THIS
-            name = {0: "bass", 1: "tenor", 2: "alto", 3: "soprano"}[j]
+            #name = {0: "bass", 1: "tenor", 2: "alto", 3: "soprano"}[j]
 
             theVoice = voices[number]
 
@@ -63,18 +61,32 @@ def probabalize(data):
                 if h < len(theVoice) - 1:
                     nextNote = theVoice[h+1]
                     #TODO once we have keysig inference, normalize these VV
-                    #note = normalize.normalize_pitch(note)
-                    #nextNote = normalize.normalize_pitch(nextNote)
-                    note = note["pitch"]
-                    nextNote = nextNote["pitch"]
+                    if (not note.get("keysig") or not note.get("keysig")):
+                        continue
+                    note = normalize.normalize_pitch(note)
+                    nextNote = normalize.normalize_pitch(nextNote)
+                    #note = note["pitch"]
+                    #nextNote = nextNote["pitch"]
 
                     if not counts[name].get(note):
                         counts[name][note] = {}
 
                     counts[name][note][nextNote] = counts[name][note].get(nextNote, 0) + 1
 
+    #print counts
+
+    #sanitize for noneType
+    for i in range(19):
+        if not counts.get(i):
+            counts[i] = {}
+
+    for key, data in counts.iteritems():
+        for i in range(19):
+            if not data.get(i):
+                data[i]=0
 
     return counts
+
 
 """#{{{
 OLD WHEY
@@ -117,7 +129,7 @@ if __name__ == '__main__':
     #test Data
     #data = {"one" : [[{"st": 8  ,  "pitch": 67,  "dur": 4 ,  "keysig": -1,  "timesig": 12,  "fermata": 0}, {"st": 12  ,  "pitch": 69,  "dur": 8 ,  "keysig": -1,  "timesig": 12,  "fermata": 0}], [{"st": 8  ,  "pitch": 67,  "dur": 4 ,  "keysig": -1,  "timesig": 12,  "fermata": 0}, {"st": 12  ,  "pitch": 69,  "dur": 8 ,  "keysig": -1,  "timesig": 12,  "fermata": 0}], [{"st": 8  ,  "pitch": 67,  "dur": 4 ,  "keysig": -1,  "timesig": 12,  "fermata": 0}, {"st": 12  ,  "pitch": 69,  "dur": 8 ,  "keysig": -1,  "timesig": 12,  "fermata": 0}], [{"st": 8  ,  "pitch": 67,  "dur": 4 ,  "keysig": -1,  "timesig": 12,  "fermata": 0}, {"st": 12  ,  "pitch": 69,  "dur": 8 ,  "keysig": -1,  "timesig": 12,  "fermata": 0}]]}
     #data = {"one" : [[{"st": 8  ,  "pitch": 67,  "dur": 4 ,  "keysig": -1,  "timesig": 12,  "fermata": 0}, {"st": 12  ,  "pitch": 69,  "dur": 8 ,  "keysig": -1,  "timesig": 12,  "fermata": 0}], [], [], []]}
-    data = json.load(open("../dataset/fourPartJSON.json", "rb"))
+    data = json.load(open("../dataset/cleandata.json", "rb"))
     probs = probabalize(data)
 
     print probs
