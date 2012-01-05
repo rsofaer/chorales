@@ -30,7 +30,7 @@ def genJson(file):
         st = 0
         for bar in voice:
             for note in bar:
-                dur = 16/float(int(note[1]))
+                dur = float(int(note[1]))
                 pitch = note[2]
                 if len(pitch) < 1:
                     continue
