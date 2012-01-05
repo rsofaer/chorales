@@ -42,13 +42,13 @@ def probabalize(data):
             continue
         for j, number in enumerate(avgNums):
             #you could do this
-            if j is 0:
-                name = "bass"
-            if j is 1:
-                name = "tenor"
-            if j is 2:
-                name = "alto"
             if j is 3:
+                name = "bass"
+            if j is 2:
+                name = "tenor"
+            if j is 1:
+                name = "alto"
+            if j is 0:
                 name = "soprano"
 
             #OR THIS
@@ -60,13 +60,10 @@ def probabalize(data):
             for h, note in enumerate(theVoice):
                 if h < len(theVoice) - 1:
                     nextNote = theVoice[h+1]
-                    #TODO once we have keysig inference, normalize these VV
                     if (not note.get("keysig") or not note.get("keysig")):
                         continue
                     note = normalize.normalize_pitch(note)
                     nextNote = normalize.normalize_pitch(nextNote)
-                    #note = note["pitch"]
-                    #nextNote = nextNote["pitch"]
 
                     if not counts[name].get(note):
                         counts[name][note] = {}
