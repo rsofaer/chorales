@@ -15,6 +15,10 @@ def genJson(file):
         print "Error: ", e
 
 
+    print "V_V_V"
+    print composition
+    print "V_V_V"
+
     tempo = composition[1]
     print tempo
 
@@ -26,7 +30,7 @@ def genJson(file):
         st = 0
         for bar in voice:
             for note in bar:
-                dur = 16/note[1]
+                dur = 16/float(int(note[1]))
                 pitch = note[2]
                 if len(pitch) < 1:
                     continue
