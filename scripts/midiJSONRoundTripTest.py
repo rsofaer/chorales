@@ -15,7 +15,7 @@ class TestMidiJSON(unittest.TestCase):
         midify.midify(jsonDict, miditempfile)
         newJsonDict = midiTojson.genJson("../dataset/midi/" + miditempfile + ".mid")
         print jsonDict
-        print
+        print "_V"*40
         print newJsonDict
         assert(jsonDict == newJsonDict)
 
