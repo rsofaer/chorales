@@ -16,9 +16,10 @@ pitch_key = "norm_pitch"
 class ChordEnergizer:
     def __init__(self, data):
         self.data = map(normalizer.normalize_chorale,data)
+        self.count_intervals()
         self.count_chords()
 
-    def energy(self, chord):
+    def sum_pair_energy(self, chord):
         if not type(chord[0]) is int and 'pitch' in chord[0]:
             norm_chord = normalizer.normalize_sequence(chord)
         else:
@@ -29,6 +30,19 @@ class ChordEnergizer:
             total_energy += self.pair_energy(melody_note, norm_chord[i])
         return total_energy
 
+    # This energy function does not use pairEnergy and intervalCounts
+    # It uses chordCounts.
+    def chord_energy(self, chord):
+        if not type(chord[0]) is int and 'pitch' in chord[0]:
+            norm_chord = normalizer.normalize_sequence(chord)
+        else:
+            norm_chord = chord
+        chordString = chordStringFromList(norm_chord)
+
+        if not chordString in self.chordCounts:
+            return 999999999
+        return 1.0/self.chordCounts[chordString]
+
     def pair_energy(self, pitch_one, pitch_two):
         if type(pitch_one) is int:
             pitch_one_i = pitch_one
@@ -36,12 +50,12 @@ class ChordEnergizer:
         else:
             pitch_one_i = pitch_one[pitch_key]
             pitch_two_i = pitch_two[pitch_key]
-        copitches = self.chordCounts[pitch_one_i]
+        copitches = self.intervalCounts[pitch_one_i]
         if not pitch_two_i in copitches:
             return 99999999
-        return 1.0/self.chordCounts[pitch_one_i][pitch_two_i]
+        return 1.0/self.intervalCounts[pitch_one_i][pitch_two_i]
 
-    def count_chords(self):
+    def count_intervals(self):
         total_copitch_map = {}
         count = 0
         sys.stderr.write("ChordEnergy processing chorales: ")
@@ -54,7 +68,52 @@ class ChordEnergizer:
                     total_copitch_map[copitch] = {}
                 add_hash(total_copitch_map[copitch], chorale_copitches[copitch])
         sys.stderr.write("\n")
-        self.chordCounts = total_copitch_map
+        self.intervalCounts = total_copitch_map
+
+    def count_chords(self):
+        chord_counts = {}
+        for chorale in self.data:
+            add_hash(chord_counts, chorale_chords(chorale))
+        self.chordCounts = chord_counts
+
+def chorale_chords(chorale):
+    chord_counts = {}
+    lastNote = chorale[0][len(chorale[0])-1]
+    endTime = int(lastNote["st"] + lastNote["dur"])
+    voiceCounters = [0,0,0,0]
+    for time in range(0,endTime-1):
+        chordList = []
+
+        for j in range(0, len(chorale)):
+            if not voiceCounters[j] >= len(chorale[j]):
+                activeNote = chorale[j][voiceCounters[j]]
+                if not noteActiveAt(activeNote, time):
+                    voiceCounters[j] += 1
+                    if voiceCounters[j] >= len(chorale[j]):
+                        activeNote = None
+                    else:
+                        activeNote = chorale[j][voiceCounters[j]]
+                if not activeNote == None:
+                    chordList.append(activeNote[pitch_key])
+
+        chord_string = chordStringFromList(chordList)
+        if not chord_string in chord_counts:
+            chord_counts[chord_string] = 0
+        chord_counts[chord_string] += 1
+    
+    return chord_counts
+
+def chordStringFromList(chordList):
+    if type(chordList[0]) == dict:
+        chordList = map(lambda d: d[pitch_key], chordList)
+    chordString = ""
+    for x in chordList:
+        chordString += str(x) + ","
+
+    return chordString
+
+def noteActiveAt(note, time):
+    return note["st"] <= time and note["st"] + note["dur"] >= time
 
 def copitch_map(chorale):
     copitch_map = {}
