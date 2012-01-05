@@ -24,6 +24,11 @@ class TestMidiJSON(unittest.TestCase):
                     print "j :: ", j
                     print newJsonDict[i][j]
                     print jsonDict[i][j]
+                if not newJsonDict[i][j]["dur"] == jsonDict[i][j]["dur"]:
+                    print "i :: ", i
+                    print "j :: ", j
+                    print newJsonDict[i][j]
+                    print jsonDict[i][j]
                 self.assertEqual(newJsonDict[i][j]["pitch"], jsonDict[i][j]["pitch"])
                 self.assertEqual(newJsonDict[i][j]["dur"], jsonDict[i][j]["dur"])
 
