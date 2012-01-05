@@ -16,6 +16,7 @@ pitch_key = "norm_pitch"
 class ChordEnergizer:
     def __init__(self, data):
         self.data = map(normalizer.normalize_chorale,data)
+        self.count_intervals()
         self.count_chords()
 
     def energy(self, chord):
@@ -36,12 +37,12 @@ class ChordEnergizer:
         else:
             pitch_one_i = pitch_one[pitch_key]
             pitch_two_i = pitch_two[pitch_key]
-        copitches = self.chordCounts[pitch_one_i]
+        copitches = self.intervalCounts[pitch_one_i]
         if not pitch_two_i in copitches:
             return 99999999
-        return 1.0/self.chordCounts[pitch_one_i][pitch_two_i]
+        return 1.0/self.intervalCounts[pitch_one_i][pitch_two_i]
 
-    def count_chords(self):
+    def count_intervals(self):
         total_copitch_map = {}
         count = 0
         sys.stderr.write("ChordEnergy processing chorales: ")
@@ -54,7 +55,42 @@ class ChordEnergizer:
                     total_copitch_map[copitch] = {}
                 add_hash(total_copitch_map[copitch], chorale_copitches[copitch])
         sys.stderr.write("\n")
-        self.chordCounts = total_copitch_map
+        self.intervalCounts = total_copitch_map
+
+    def count_chords(self):
+        chord_counts = {}
+        for chorale in self.data:
+            add_hash(chord_counts, chorale_chords(chorale))
+        self.chordCounts = chord_counts
+
+def chorale_chords(chorale):
+    chord_counts = {}
+    lastNote = chorale[0][len(chorale[0])-1]
+    endTime = int(lastNote["st"] + lastNote["dur"])
+    voiceCounters = [0,0,0,0]
+    for time in range(0,endTime-1):
+        chord_string = ""
+
+        for j in range(0, len(chorale)):
+            if not voiceCounters[j] >= len(chorale[j]):
+                activeNote = chorale[j][voiceCounters[j]]
+                if not noteActiveAt(activeNote, time):
+                    voiceCounters[j] += 1
+                    if voiceCounters[j] >= len(chorale[j]):
+                        activeNote = None
+                    else:
+                        activeNote = chorale[j][voiceCounters[j]]
+                if not activeNote == None:
+                    chord_string += str(activeNote[pitch_key]) + ","
+
+        if not chord_string in chord_counts:
+            chord_counts[chord_string] = 0
+        chord_counts[chord_string] += 1
+    
+    return chord_counts
+
+def noteActiveAt(note, time):
+    return note["st"] <= time and note["st"] + note["dur"] >= time
 
 def copitch_map(chorale):
     copitch_map = {}
