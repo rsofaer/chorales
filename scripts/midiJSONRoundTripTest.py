@@ -17,7 +17,9 @@ class TestMidiJSON(unittest.TestCase):
         print jsonDict
         print "_V"*40
         print newJsonDict
-        assert(jsonDict == newJsonDict)
+        for i in range(0,len(newJsonDict)-1):
+            for j in range(0, len(newJsonDict[i])-1):
+                self.assertTrue(newJsonDict[i][j]["pitch"] == jsonDict[i][i]["pitch"])
 
 if __name__ == '__main__':
     unittest.main()
