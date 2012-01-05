@@ -11,8 +11,8 @@ Description: turns a midi to a json like we're used to. Requires mingus
 def genJson(file):
     try:
         composition = mi.MIDI_to_Composition(file)
-    except Error as e:
-        print e
+    except Exception as e:
+        print "Error: ", e
 
 
     tempo = composition[1]

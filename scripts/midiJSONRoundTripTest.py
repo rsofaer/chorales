@@ -4,18 +4,20 @@ import midify
 import midiTojson
 import unittest
 
-midifile = "../dataset/fourPartChorales/00101b_.mid"
+midifile = "../dataset/fourPartChorales/039200b_.mid"
 jsontempfile = "round_trip_json_temp"
 miditempfile = "round_trip_midi_temp"
 
 class TestMidiJSON(unittest.TestCase):
-    
+
     def testRoundTrip(self):
         jsonDict = midiTojson.genJson(midifile)
         midify.midify(jsonDict, miditempfile)
-        newJsonDict = midiTojson.genJson(miditempfile)
+        newJsonDict = midiTojson.genJson("../dataset/midi/" + miditempfile + ".mid")
         print jsonDict
         print
         print newJsonDict
-        assertTrue(jsonDict == newJsonDict)
+        assert(jsonDict == newJsonDict)
 
+if __name__ == '__main__':
+    unittest.main()
