@@ -14,7 +14,7 @@ def midify(voices,filename='output'):
         # Tracks are numbered from zero. Times are measured in beats.
         track = jndex
         time = 0
-        tempo = 360 #in BPM
+        tempo = (notes[0][u'tempo'] if u'tempo' in note[0] else 360) #in BPM
 
         # Add track name and tempo.
         name = {0:'Soprano',1:'Alto',2:'Tenor',3:'Bass'}[jndex] #:o HAX
