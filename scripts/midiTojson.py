@@ -32,7 +32,7 @@ def genJson(file):
                     continue
                 pitch = pitch[0]
                 pitchNum = int(pitch)
-                noteDict = {"st":st, "pitch" : pitchNum, "dur" : dur, "keysig": None, "timesig" : None, "tempo": tempo, "fermata": 0}
+                noteDict = {"st":st, "pitch" : pitchNum+12, "dur" : dur, "keysig": None, "timesig" : None, "tempo": tempo, "fermata": 0}
                 noteSequence.append(noteDict)
                 st += dur
 
