@@ -40,7 +40,7 @@ class ChordEnergizer:
         chordString = chordStringFromList(norm_chord)
 
         if not chordString in self.chordCounts:
-            return 999999999
+            return 999999999.0
         return 1.0/self.chordCounts[chordString]
 
     def pair_energy(self, pitch_one, pitch_two):
@@ -52,7 +52,7 @@ class ChordEnergizer:
             pitch_two_i = pitch_two[pitch_key]
         copitches = self.intervalCounts[pitch_one_i]
         if not pitch_two_i in copitches:
-            return 99999999
+            return 99999999.0
         return 1.0/self.intervalCounts[pitch_one_i][pitch_two_i]
 
     def count_intervals(self):
