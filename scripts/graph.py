@@ -18,8 +18,26 @@ cleandata = json.load(open("../dataset/cleandata.json", "rb"))
 
 """
 Note: chords here are usually tuples with ([list,of,notes], #energy)
-
 """
+class Graph():
+    """ holds layers"""
+    def __init__(self, duration= 40):
+        self.ce = ChordEnergy(cleandata)
+        self.chord_list = ce.chordCounts
+        self.probs = probabalize(data)
+        self.layers = []
+        for chord in chord_list:
+            self.chords.append(chordNode(chord))
+        for i in range(duration):
+            self.layers.append(layer())
+
+class layer():
+    """Holds all possible chords along with weights for each"""
+    def __init__(self):
+        self.chords = []
+        #for chord in chord_list:
+            #self.chords.append(chordNode(chord))
+
 class chordNode():
     """Has a chord, a number of incoming energies and a node energy """
     def __init__(self, chord):
@@ -27,26 +45,10 @@ class chordNode():
         self.energy = chord[1]
         #outbound is a list of all following chords and the energies to go from one to the next
         self.outboud = []
-        for other in chord_list:
+        for other in :
             self.outbound.append((other, cross_energy(self.chord, other)))
 
 
-class layer():
-    """Holds all possible chords along with weights for each"""
-    def __init__(self):
-        self.chords = []
-        for chord in chord_list:
-            self.chords.append(chordNode(chord))
-
-
-class Graph():
-    """ holds layers"""
-    def __init__(self, duration= 40):
-        self.chord_e = ChordEnergy(cleandata)
-        self.probs = probabalize(data)
-        self.layers = []
-        for i in range(duration):
-            self.layers.append(layer())
 
 
 def cross_energy(origin, outbound):
