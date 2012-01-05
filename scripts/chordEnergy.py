@@ -19,7 +19,7 @@ class ChordEnergizer:
         self.count_intervals()
         self.count_chords()
 
-    def energy(self, chord):
+    def sum_pair_energy(self, chord):
         if not type(chord[0]) is int and 'pitch' in chord[0]:
             norm_chord = normalizer.normalize_sequence(chord)
         else:
@@ -29,6 +29,19 @@ class ChordEnergizer:
         for i in range(1, len(chord)):
             total_energy += self.pair_energy(melody_note, norm_chord[i])
         return total_energy
+
+    # This energy function does not use pairEnergy and intervalCounts
+    # It uses chordCounts.
+    def chord_energy(self, chord):
+        if not type(chord[0]) is int and 'pitch' in chord[0]:
+            norm_chord = normalizer.normalize_sequence(chord)
+        else:
+            norm_chord = chord
+        chordString = chordStringFromList(norm_chord)
+
+        if not chordString in self.chordCounts:
+            return 999999999
+        return 1.0/self.chordCounts[chordString]
 
     def pair_energy(self, pitch_one, pitch_two):
         if type(pitch_one) is int:
@@ -69,7 +82,7 @@ def chorale_chords(chorale):
     endTime = int(lastNote["st"] + lastNote["dur"])
     voiceCounters = [0,0,0,0]
     for time in range(0,endTime-1):
-        chord_string = ""
+        chordList = []
 
         for j in range(0, len(chorale)):
             if not voiceCounters[j] >= len(chorale[j]):
@@ -81,13 +94,23 @@ def chorale_chords(chorale):
                     else:
                         activeNote = chorale[j][voiceCounters[j]]
                 if not activeNote == None:
-                    chord_string += str(activeNote[pitch_key]) + ","
+                    chordList.append(activeNote[pitch_key])
 
+        chord_string = chordStringFromList(chordList)
         if not chord_string in chord_counts:
             chord_counts[chord_string] = 0
         chord_counts[chord_string] += 1
     
     return chord_counts
+
+def chordStringFromList(chordList):
+    if type(chordList[0]) == dict:
+        chordList = map(lambda d: d[pitch_key], chordList)
+    chordString = ""
+    for x in chordList:
+        chordString += str(x) + ","
+
+    return chordString
 
 def noteActiveAt(note, time):
     return note["st"] <= time and note["st"] + note["dur"] >= time
