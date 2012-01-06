@@ -88,7 +88,7 @@ class chordNode():
         alpha = 0.0000001
         beta = 4.0
         gamma = 10.5
-        delta = 0.1
+        delta = 0.0000001
 
         #Energies: E1|cnode.energy, E2|cnode.outbound_cross_e, E3|outbound_chord_e
         E1 = float("inf")
@@ -165,7 +165,7 @@ def testGeneration():
     print "generate!"
     #flip test_table
     test_table = tableify(test_table)
-    generated_sequence = generate(first_chord, len(test_table))
+    generated_sequence = generate(first_chord, 50)
 
 
 
@@ -176,7 +176,7 @@ def testGeneration():
 
     total_loss = 0
 
-    for i in range(len(test_table)):
+    for i in range(50):
         total_loss += lossify(test_table[i], generated_sequence[i].chord)
 
     print "total loss is: ", total_loss
@@ -190,7 +190,7 @@ def chords_to_midi(chords):
         print c
         for i in range(4):
             cpitch = c[i]
-            entry = {'timesig': None, 'keysig': 0, 'tempo': 85, 'st': st*4, 'pitch': cpitch, 'dur': 4, 'fermata': 0}
+            entry = {'timesig': None, 'keysig': 0, 'tempo': 100, 'st': st*4, 'pitch': cpitch, 'dur': 4, 'fermata': 0}
             json_dict[i].append(entry)
 
     #print json_dict
