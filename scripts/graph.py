@@ -11,7 +11,8 @@ import sys
 from datetime import datetime as dt
 
 from noteToNoteProbs import probabalize
-from chordEnergy import ChordEnergizer
+import chordEnergy
+import midjiTojson
 
 #Global cleandata
 cleandata = json.load(open("../dataset/cleandata.json", "rb"))
@@ -109,17 +110,6 @@ class chordNode():
         return best_chord
 
 
-#most likely this piece is not needed VV
-class layer():
-    """Holds all possible chords along with weights for each"""
-    def __init__(self):
-        self.chords = []
-        #for chord in chord_list:
-            #self.chords.append(chordNode(chord))
-
-
-
-
 def cross_energy(origin, outbound):
     """returns an energy for going from one chord to the other based on note-likelihood for each voice"""
     total_energy = 0
@@ -138,7 +128,33 @@ def cross_energy(origin, outbound):
 def testGeneration():
     """take a midi of an original chorale, table-fy it, take first chord, generate a new table from our energies, compare"""
     #will return a loss for the specific values of alpha beta gamma (sorority?)
+    midifile = "../dataset/fourPartChorales/039200b_.mid"
+    json_dict = midiTojson.genJson(midifile)
+    #tableify
+    test_table = chordEnergy.table_from_chorale(json_dict)
+    g = Graph()
 
+    first_chord = table[0]
+    first_chord = g.chords.get(first_chord)
+    assert(first_chord)
+
+    generated_sequence = generate(first_chord, len(table))
+
+    total_loss = 0
+    for i in range(len(table)):
+        total_loss += lossify(table[i], generated_sequence[i])
+
+    print total_loss
+
+def lossify(c1, c2):
+    """loss per two chords on simple euclidean distance"""
+    total = 0
+    for i in range(len(c1)):
+        total +=(abs(c1[i] - c2[i]) if c1[i] != None and c2[i] != None else 0)
+        if (c2[i] == None and c2[i] != None) or (c1[i] != None and c2[i] == None):
+            total += 19
+
+    return total
 
 
 
