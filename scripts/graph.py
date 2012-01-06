@@ -54,6 +54,7 @@ class Graph():
             i += 1
             if i%90 == 0:
                 sys.stdout.write('.')
+            #how can we do his every time ? VV
             energy = self.ce.chord_energy(chord, normed=True)
             self.chords[chord] = chordNode(self, self.ce, chord, energy, self.chord_changes.get(chord, None))
 
@@ -84,8 +85,9 @@ class chordNode():
 
         #Weights: alpha|E1, beta|E2, gamma|E3
         alpha = 0.0000001
-        beta = 4000000.0
-        gamma = 1000000000.5
+        beta = 4.0
+        gamma = 10.5
+        delta = 1.0
 
         #Energies: E1|cnode.energy, E2|cnode.outbound_cross_e, E3|outbound_chord_e
         E1 = float("inf")
@@ -106,6 +108,10 @@ class chordNode():
                 E3 = temp3
                 best_chord = self.graph.chords[ch]
 
+        #make that chord less likely
+        self.graph.ce.chordCounts[best_chord.chord] -= delta*40
+        #also want to re-energize that chord
+        best_chord.energy = self.graph.ce.chord_energy(best_chord.chord, normed=True)
 
         return best_chord
 
