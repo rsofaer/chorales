@@ -39,7 +39,7 @@ The chords that each Graph object hold look like this:
     here:
 
     object layout for:
-        graph = [cnode, cnode, cnode]
+        graph = {chord : cnode, chord : cnode, chord : cnode}
 
         cnode{
             self.chord = (1,2,3,4)
@@ -60,14 +60,15 @@ class Graph():
         self.chord_energies = self.ce.chordCounts
         self.chord_changes = self.ce.chordChanges
         self.probs = probs
-        self.chords = []
+        self.chords = {}
         print "Adding chords"
         i = 0
         for chord, energy in self.chord_energies.iteritems():
             i += 1
             if i%90 == 0:
                 sys.stdout.write('.')
-            self.chords.append(chordNode(self.ce, chord, energy, self.chord_changes.get(chord, None)))
+            #self.chords.append(chordNode(self.ce, chord, energy, self.chord_changes.get(chord, None)))
+            self.chords[chord] = chordNode(self.ce, chord, energy, self.chord_changes.get(chord, None))
 
         time2 = dt.now()
         print ""
