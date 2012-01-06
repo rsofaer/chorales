@@ -16,13 +16,8 @@ class TestChordEnergy(unittest.TestCase):
         self.chorale = data[0]
         self.ce = e.ChordEnergizer([self.chorale])
 
-    def testCopitches(self):
-        e.copitches(self.chorale, self.chorale[0][0])
-        e.copitches(self.chorale, self.chorale[0][4])
-        e.copitches(self.chorale, self.chorale[3][6])
-
     def testCopitchMap(self):
-        e.copitch_map(self.chorale)
+        e.copitch_map(e.table_from_chorale(self.chorale))
 
     def testChordPairEnergy(self):
         self.chorales = data

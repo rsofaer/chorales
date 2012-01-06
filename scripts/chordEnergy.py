@@ -16,6 +16,7 @@ pitch_key = "norm_pitch"
 class ChordEnergizer:
     def __init__(self, data):
         self.data = map(normalizer.normalize_chorale,data)
+        self.tables = map(table_from_chorale, data)
         self.count_intervals()
         self.count_chords()
 
@@ -57,18 +58,16 @@ class ChordEnergizer:
 
     def count_intervals(self):
         total_copitch_map = {}
-        count = 0
-        sys.stderr.write("ChordEnergy processing chorales: ")
-        for chorale in self.data:
-            sys.stderr.write(".")
-            count+=1
-            chorale_copitches = copitch_map(chorale)
+        for chorale_table in self.tables:
+            chorale_copitches = copitch_map(chorale_table)
             for copitch in chorale_copitches.keys():
                 if not copitch in total_copitch_map:
                     total_copitch_map[copitch] = {}
                 add_hash(total_copitch_map[copitch], chorale_copitches[copitch])
-        sys.stderr.write("\n")
         self.intervalCounts = total_copitch_map
+
+    def count_chord_changes(self):
+        total_chord_change_map = {}
 
     def count_chords(self):
         chord_counts = {}
@@ -126,32 +125,22 @@ def chordStringFromList(chordList):
 def noteActiveAt(note, time):
     return note["st"] <= time and note["st"] + note["dur"] >= time
 
-def copitch_map(chorale):
+def copitch_map(chorale_table):
     copitch_map = {}
-    for note in chorale[0]:
-        base_pitch = note[pitch_key]
-        if not base_pitch in copitch_map:
-            copitch_map[base_pitch] = {}
-        note_copitches = copitches(chorale, note)
-        for copitch in note_copitches.keys():
-            if not copitch in copitch_map[base_pitch]:
-                copitch_map[base_pitch][copitch] = 0
-            copitch_map[base_pitch][copitch] += note_copitches[copitch]
+    previous_moment = None
+    for time in range(0, len(chorale_table[0])):
+        moment = tuple( map(lambda v: v[time], chorale_table))
+        if not previous_moment == moment:
+            base_pitch = moment[0]
+            if not base_pitch in copitch_map:
+                copitch_map[base_pitch] = {}
+            for i in range(1, len(chorale_table)):
+                copitch = moment[i]
+                if not copitch in copitch_map[base_pitch]:
+                    copitch_map[base_pitch][copitch] = 0
+                copitch_map[base_pitch][copitch] += 1
+        previous_moment = moment
     return copitch_map
-
-# Given a note, find the pitches in the chorale that occur at the same time.
-def copitches(chorale, note):
-    copitches = {}
-    for voice in chorale:
-        for conote in voice:
-            if (((conote["st"] + conote["dur"]) > note["st"] and conote["st"] <= note["st"]) or
-                 (conote["st"] < note["st"] + note["dur"]) and conote["st"] >= note["st"]):
-                if not conote[pitch_key] in copitches:
-                    copitches[conote[pitch_key]] = 0
-                copitches[conote[pitch_key]] += 1
-    #remove note from copitches
-    copitches[note[pitch_key]] -= 1
-    return copitches
 
 def add_hash(hash_one, hash_two):
     for k in hash_two.keys():
