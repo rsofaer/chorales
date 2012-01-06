@@ -51,6 +51,9 @@ class chordNode():
         #outbound is a list of all following chords and the energies to go from one to the next
         self.outbound = []
         """
+        This is what crashes:
+
+
         for other in graph.chord_energies:
             print "here is the other!"
             print other
