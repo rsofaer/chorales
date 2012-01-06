@@ -88,7 +88,7 @@ class chordNode():
         alpha = 0.0000001
         beta = 4.0
         gamma = 10.5
-        delta = 1.0
+        delta = 0.1
 
         #Energies: E1|cnode.energy, E2|cnode.outbound_cross_e, E3|outbound_chord_e
         E1 = float("inf")
@@ -110,7 +110,9 @@ class chordNode():
                 best_chord = self.graph.chords[ch]
 
         #make that chord less likely
-        self.graph.ce.chordCounts[best_chord.chord] -= delta*40
+
+        print best_chord.energy
+        self.graph.ce.chordCounts[best_chord.chord] *= delta
         #also want to re-energize that chord
         best_chord.energy = self.graph.ce.chord_energy(best_chord.chord, normed=True)
 
@@ -225,10 +227,11 @@ def tableify(l):
 def denormalize_chord(chord):
     """ Takes a tuple representing a chord, returns a new tuple"""
     newChord = list(chord)
-    newChord[0] = newChord[0] + 60
-    newChord[1] = newChord[1] + 48
-    newChord[2] = newChord[2] + 48
-    newChord[3] = newChord[3] + 36
+    offsets = [60,48,48,36]
+    for i in range(0, len(newChord)):
+        if type(newChord[i]) == int:
+            newChord[i] += offsets[i]
+
     return tuple(newChord)
 
 
