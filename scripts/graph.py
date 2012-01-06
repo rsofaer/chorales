@@ -24,20 +24,6 @@ def hasKeySig(chorale):
 data = filter(hasKeySig, data)
 probs = probabalize(cleandata)
 """
-Note: chords here are usually tuples with ([list,of,notes], #energy)
-The chords that each Graph object hold look like this:
-    {
-        ((1,2,3,4), energyOfChord) : {dictionary of "next possible chords/costs"},
-        ((3,2,3,4), energyOfChord) : {dictionary of "next possible chords/costs"},
-        ((4,2,3,4), energyOfChord) : {dictionary of "next possible chords/costs"}
-
-
-    }
-
-    SCRAP DAT
-
-    here:
-
     object layout for:
         graph = {chord : cnode, chord : cnode, chord : cnode}
 
@@ -63,11 +49,12 @@ class Graph():
         self.chords = {}
         print "Adding chords"
         i = 0
-        for chord, energy in self.chord_energies.iteritems():
+        for chord, count in self.chord_energies.iteritems():
             i += 1
             if i%90 == 0:
                 sys.stdout.write('.')
             #self.chords.append(chordNode(self.ce, chord, energy, self.chord_changes.get(chord, None)))
+            energy = self.ce.chord_energy(chord, normed=True)
             self.chords[chord] = chordNode(self.ce, chord, energy, self.chord_changes.get(chord, None))
 
         time2 = dt.now()
@@ -79,7 +66,7 @@ class chordNode():
     """Has a chord, a number of incoming energies and a node energy """
     def __init__(self, chord_energizer, chord, energy, outbound):
         self.chord = chord
-        print self.chord
+        #print self.chord
         self.energy = energy
         #outbound is a dict of all following chords and the energies to go from one to the next
         assert(outbound)

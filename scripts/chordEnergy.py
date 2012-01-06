@@ -34,16 +34,22 @@ class ChordEnergizer:
 
     # This energy function does not use pairEnergy and intervalCounts
     # It uses chordCounts.
-    def chord_energy(self, chord):
-        if not type(chord[0]) is int and 'pitch' in chord[0]:
-            norm_chord = normalizer.normalize_sequence(chord)
+    def chord_energy(self, chord, normed=False):
+        norm_chord = None
+        if not normed:
+            if not type(chord[0]) is int and 'pitch' in chord[0]:
+                norm_chord = normalizer.normalize_sequence(chord)
+            else:
+                norm_chord = chord
+        #chordString = chordStringFromList(norm_chord)
+        if norm_chord:
+            chord_tuple = tuple(norm_chord)
         else:
-            norm_chord = chord
-        chordString = chordStringFromList(norm_chord)
+            chord_tuple = tuple(chord)
 
-        if not chordString in self.chordCounts:
+        if not chord_tuple in self.chordCounts:
             return 999999999
-        return 1.0/self.chordCounts[chordString]
+        return 1.0/self.chordCounts[chord_tuple]
 
     def pair_energy(self, pitch_one, pitch_two):
         if type(pitch_one) is int:
