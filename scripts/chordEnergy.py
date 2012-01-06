@@ -49,7 +49,7 @@ class ChordEnergizer:
 
         chord_tuple = tuple(norm_chord)
 
-        if not chord_tuple in self.chordCounts:
+        if not chord_tuple in self.chordCounts or self.chordCounts[chord_tuple] == 0:
             return 999999999
         return 1.0/self.chordCounts[chord_tuple]
 

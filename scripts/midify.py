@@ -26,22 +26,22 @@ def midify(voices,filename='output'):
 
         channel = jndex
         for index, note in enumerate(notes):
+            if note[u'pitch']:
+                # Add a note. addNote expects the following information:
+                #track = 0 #set above
 
-            # Add a note. addNote expects the following information:
-            #track = 0 #set above
-
-            pitch = note[u'pitch']
-            time = note[u'st']/float(4)
-            #fermata is added to duration if it's 1
-            duration = note[u'dur']/float(4) + (fermata*note[u'fermata'])
-            #print "bitch"
-            #print duration
-            volume = 100
-
-            #not dealt with: timesig, keysig
-
-            # Now add the note.
-            MyMIDI.addNote(track,channel,pitch,time,duration,volume)
+                pitch = note[u'pitch']
+                time = note[u'st']/float(4)
+                #fermata is added to duration if it's 1
+                duration = note[u'dur']/float(4) + (fermata*note[u'fermata'])
+                #print "bitch"
+                #print duration
+                volume = 100
+                
+                #not dealt with: timesig, keysig
+                
+                # Now add the note.
+                MyMIDI.addNote(track,channel,pitch,time,duration,volume)
 
 
     # And write it to disk.
