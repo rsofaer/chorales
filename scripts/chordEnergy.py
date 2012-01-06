@@ -78,30 +78,42 @@ class ChordEnergizer:
 
 def chorale_chords(chorale):
     chord_counts = {}
-    lastNote = chorale[0][len(chorale[0])-1]
-    endTime = int(lastNote["st"] + lastNote["dur"])
-    voiceCounters = [0,0,0,0]
+    endTime = chorale_end_time(chorale)
+    table = table_from_chorale(chorale)
     for time in range(0,endTime-1):
-        chordList = []
-
-        for j in range(0, len(chorale)):
-            if not voiceCounters[j] >= len(chorale[j]):
-                activeNote = chorale[j][voiceCounters[j]]
-                if not noteActiveAt(activeNote, time):
-                    voiceCounters[j] += 1
-                    if voiceCounters[j] >= len(chorale[j]):
-                        activeNote = None
-                    else:
-                        activeNote = chorale[j][voiceCounters[j]]
-                if not activeNote == None:
-                    chordList.append(activeNote[pitch_key])
-
+        chordList = map(lambda v: v[time], table)
         chord_string = chordStringFromList(chordList)
         if not chord_string in chord_counts:
             chord_counts[chord_string] = 0
         chord_counts[chord_string] += 1
     
     return chord_counts
+
+def table_from_chorale(chorale):
+    table = []
+    end_time = chorale_end_time(chorale)
+    base_list = map(lambda i: None, range(0,end_time))
+    for voice in chorale:
+        voice_row = list(base_list)
+        noteCounter = 0
+        for time in range(0, end_time):
+            if noteActiveAt(voice[noteCounter], time):
+                voice_row[time] = voice[noteCounter][pitch_key]
+            else:
+                if not voice[noteCounter]["st"] > time:
+                    noteCounter += 1
+                    if noteCounter >= len(voice):
+                        break
+                if noteActiveAt(voice[noteCounter], time):
+                    voice_row[time] = voice[noteCounter][pitch_key]
+        table.append(voice_row)
+    return table
+        
+
+def chorale_end_time(chorale):
+    last_notes = map(lambda v: v[len(v)-1], chorale)
+    end_times = map(lambda n: int(n["st"] + n["dur"]), last_notes)
+    return max(end_times)
 
 def chordStringFromList(chordList):
     if type(chordList[0]) == dict:
