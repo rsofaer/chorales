@@ -53,9 +53,8 @@ class Graph():
             i += 1
             if i%90 == 0:
                 sys.stdout.write('.')
-            #self.chords.append(chordNode(self.ce, chord, energy, self.chord_changes.get(chord, None)))
             energy = self.ce.chord_energy(chord, normed=True)
-            self.chords[chord] = chordNode(self.ce, chord, energy, self.chord_changes.get(chord, None))
+            self.chords[chord] = chordNode(self, self.ce, chord, energy, self.chord_changes.get(chord, None))
 
         time2 = dt.now()
         print ""
@@ -63,9 +62,9 @@ class Graph():
 
 class chordNode():
     """Has a chord, a number of incoming energies and a node energy """
-    def __init__(self, chord_energizer, chord, energy, outbound):
+    def __init__(self, graph, chord_energizer, chord, energy, outbound):
+        self.graph = graph
         self.chord = chord
-        #print self.chord
         self.energy = energy
         #outbound is a dict of all following chords and the energies to go from one to the next
         assert(outbound)
@@ -78,14 +77,14 @@ class chordNode():
             self.outbound_cross_e[other] = cross_e
             self.outbound_chord_e[other] = chord_to_chord_energy
 
-            
+
     #instance method, give it a graph,, go through energies and determine the next chord
     def next_chord(self):
 
         #Weights: alpha|E1, beta|E2, gamma|E3
         alpha = 1.0
         beta = 1.0
-        gamma = 1.0 
+        gamma = 1.0
 
         #Energies: E1|cnode.energy, E2|cnode.outbound_cross_e, E3|outbound_chord_e
         E1 = float("inf")
@@ -94,7 +93,7 @@ class chordNode():
         
         best_chord = None # ...yet!
 
-        for ch in self.outbound: 
+        for ch in self.outbound:
 
             temp1 = self.graph.chords[ch].energy #the energy of the chord
             temp2 = self.outbound_cross_e[ch]
@@ -131,32 +130,35 @@ def cross_energy(origin, outbound):
         if len(outbound) > i:
             energy = 1/float(probs[voice][int(origin[i])].get(int(outbound[i]), 0.00000000001))
         else:
-            #print i
-            #print outbound
             energy = 1/float(probs[voice][int(origin[i])].get(int(outbound[0]), 0.00000000001))
-            #print energy
-        #origin[i] VS outbound[i]
-        #get occurence from probabalize (ln 43) add 1/ occ[v][origin[i][outbound[i]]
         total_energy += energy
     return total_energy
 
 
+def testGeneration():
+    """take a midi of an original chorale, table-fy it, take first chord, generate a new table from our energies, compare"""
+    #will return a loss for the specific values of alpha beta gamma (sorority?)
+
+
+
 
 if __name__ == '__main__':
+    time1 = dt.now()
     g = Graph(10)
-    #print g.generateChorale()
-    #print g.whatever_else
-    
+
     #Testing next_chord()
-    count = 0
+    num = 100
     ch = 0
     for c in g.chords:
         ch = c
         break
-    for i in range(10):
+    for i in range(num):
         print "The best chord to follow",c,"is",g.chords[c].next_chord().chord
         chor = g.chords[c].next_chord()
         c = chor.chord
+
+    time2 = dt.now()
+    print "total time to run all ",num, ": ", time2-time1
 
 
 
