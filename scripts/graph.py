@@ -12,6 +12,7 @@ from datetime import datetime as dt
 
 from noteToNoteProbs import probabalize
 import chordEnergy as che
+from midify import midify
 
 #Global cleandata
 cleandata = json.load(open("../dataset/cleandata.json", "rb"))
@@ -131,10 +132,11 @@ def testGeneration():
     #midifile = "../dataset/fourPartChorales/039200b_.mid"
     #json_dict = midiTojson.genJson(midifile)
 
-    for chorale in data:
-        json_dict = chorale
-        break
+    #for chorale in data:
+        #json_dict = chorale
+        #break
 
+    json_dict = data[4]
     #tableify
     test_table = che.table_from_chorale(json_dict)
     g = Graph()
@@ -155,6 +157,9 @@ def testGeneration():
     test_table = tableify(test_table)
     generated_sequence = generate(first_chord, len(test_table))
 
+    #write that to a midi
+    chords_to_midi(generated_sequence)
+
 
 
     total_loss = 0
@@ -163,6 +168,24 @@ def testGeneration():
         total_loss += lossify(test_table[i], generated_sequence[i].chord)
 
     print "total loss is: ", total_loss
+
+def chords_to_midi(chords):
+    """takes a chord sequence from generate and jsons then midis it"""
+    #first need to put it in json format (4 voices)
+    json_dict = [[],[],[],[]]
+    for st, chord in enumerate(chords):
+        c = chord.chord
+        print c
+        for i in range(4):
+            cpitch = c[i]
+            entry = {'timesig': None, 'keysig': 0, 'tempo': 85, 'st': st*4, 'pitch': cpitch, 'dur': 4, 'fermata': 0}
+            json_dict[i].append(entry)
+
+    #print json_dict
+    #return json_dict
+
+    midify(json_dict)
+
 
 def lossify(c1, c2):
     """loss per two chords on simple euclidean distance"""
