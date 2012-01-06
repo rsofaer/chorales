@@ -63,8 +63,10 @@ class Graph():
         print ""
         print "total time to load", len(self.chords),  " chords was: ", time2-time1
 
-
-
+        print self.chord_energies
+        print self.chord_changes
+        print self.probs
+        print self.chords
 
     #given a chord, go through energies and determine the next chord
     def next_chord(chord):
@@ -87,9 +89,7 @@ class chordNode():
         self.chord = chord
         self.energy = energy
         #outbound is a list of all following chords and the energies to go from one to the next
-
         assert(outbound)
-        #choose this line OR the commented out section based on if you want the cross_energy included
         self.outbound = outbound
         self.outbound_e = {}
         for other in outbound:
