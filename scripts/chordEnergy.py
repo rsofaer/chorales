@@ -106,8 +106,9 @@ def table_from_chorale(chorale):
                 if noteActiveAt(voice[noteCounter], time):
                     voice_row[time] = voice[noteCounter][pitch_key]
         table.append(voice_row)
+    print table
     return table
-        
+
 
 def chorale_end_time(chorale):
     last_notes = map(lambda v: v[len(v)-1], chorale)
@@ -158,3 +159,4 @@ def add_hash(hash_one, hash_two):
         if not k in hash_one:
             hash_one[k] = 0
         hash_one[k] += hash_two[k]
+

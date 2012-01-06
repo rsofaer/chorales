@@ -53,7 +53,6 @@ class chordNode():
         """
         This is what crashes:
 
-
         for other in graph.chord_energies:
             print "here is the other!"
             print other

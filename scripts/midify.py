@@ -31,9 +31,9 @@ def midify(voices,filename='output'):
             #track = 0 #set above
 
             pitch = note[u'pitch']
-            time = note[u'st']
+            time = note[u'st']/float(4)
             #fermata is added to duration if it's 1
-            duration = note[u'dur'] + (fermata*note[u'fermata'])
+            duration = note[u'dur']/float(4) + (fermata*note[u'fermata'])
             #print "bitch"
             #print duration
             volume = 100
