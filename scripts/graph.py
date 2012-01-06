@@ -165,6 +165,13 @@ def generate(chord, length):
     return l
 
 
+def tableify(l):
+    l_out = []
+    for i in range(len(l)):
+        l_out.append([v[i] for v in l])
+    return l_out
+
+
 if __name__ == '__main__':
     g = Graph(10)
 
@@ -181,7 +188,7 @@ if __name__ == '__main__':
         c = chor.chord
 
     time2 = dt.now()
-    print "total time to run all ",num, ": ", time2-time1
+    print "total time to run all",num, ": ", time2-time1
 
 
 
