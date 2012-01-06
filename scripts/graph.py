@@ -140,12 +140,19 @@ def testGeneration():
     #will return a loss for the specific values of alpha beta gamma (sorority?)
 
 
+#returns the list of generated chords
+def generate(chord, length):
+    #assuming chord is a cnode!!
+    l = [chord]
+    for i in range(length-1):
+        l.append(l[-1].next_chord())
+    return l
 
 
 if __name__ == '__main__':
-    time1 = dt.now()
     g = Graph(10)
 
+    time1 = dt.now()
     #Testing next_chord()
     num = 100
     ch = 0
