@@ -73,10 +73,10 @@ class chordNode():
         assert(outbound)
         #choose this line OR the commented out section based on if you want the cross_energy included
         self.outbound = outbound
-        self.outbound_e = []
+        self.outbound_e = {}
         for other in outbound:
             cross_e = cross_energy(self.chord, other)
-            self.outbound_e.append((other, cross_energy))
+            self.outbound_e[other] = cross_energy
 
 
 
