@@ -174,7 +174,7 @@ def chords_to_midi(chords):
     #first need to put it in json format (4 voices)
     json_dict = [[],[],[],[]]
     for st, chord in enumerate(chords):
-        c = chord.chord
+        c = denormalize_chord(chord.chord)
         print c
         for i in range(4):
             cpitch = c[i]
@@ -212,6 +212,16 @@ def tableify(l):
     for i in range(len(l[0])):
         l_out.append([v[i] for v in l])
     return l_out
+
+def denormalize_chord(chord):
+    """ Takes a tuple representing a chord, returns a new tuple"""
+    newChord = list(chord)
+    newChord[0] = newChord[0] + 60
+    newChord[1] = newChord[1] + 48
+    newChord[2] = newChord[2] + 48
+    newChord[3] = newChord[3] + 36
+    return tuple(newChord)
+
 
 
 if __name__ == '__main__':
