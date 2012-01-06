@@ -19,6 +19,7 @@ class ChordEnergizer:
         self.tables = map(table_from_chorale, data)
         self.count_intervals()
         self.count_chords()
+        self.count_chord_changes()
 
     def sum_pair_energy(self, chord):
         if not type(chord[0]) is int and 'pitch' in chord[0]:
@@ -68,6 +69,16 @@ class ChordEnergizer:
 
     def count_chord_changes(self):
         total_chord_change_map = {}
+        previous_moment = None
+        for table in self.tables:
+            for time in range(0, len(table[0])):
+                moment = tuple(map(lambda v: v[time], table))
+                if not previous_moment in total_chord_change_map:
+                    total_chord_change_map[previous_moment] = {}
+                if not moment in total_chord_change_map[previous_moment]:
+                    total_chord_change_map[previous_moment][moment] = 0
+                total_chord_change_map[previous_moment][moment] += 1
+        self.chordChanges = total_chord_change_map
 
     def count_chords(self):
         chord_counts = {}
