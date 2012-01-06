@@ -41,11 +41,13 @@ class ChordEnergizer:
                 norm_chord = normalizer.normalize_sequence(chord)
             else:
                 norm_chord = chord
-        #chordString = chordStringFromList(norm_chord)
-        if norm_chord:
-            chord_tuple = tuple(norm_chord)
         else:
-            chord_tuple = tuple(chord)
+            norm_chord = chord
+
+        if type(norm_chord[0]) == dict:
+            norm_chord = map(lambda n: n[pitch_key], norm_chord)
+
+        chord_tuple = tuple(norm_chord)
 
         if not chord_tuple in self.chordCounts:
             return 999999999
@@ -59,6 +61,7 @@ class ChordEnergizer:
             pitch_one_i = pitch_one[pitch_key]
             pitch_two_i = pitch_two[pitch_key]
         copitches = self.intervalCounts[pitch_one_i]
+
         if not pitch_two_i in copitches:
             return 99999999.0
         return 1.0/self.intervalCounts[pitch_one_i][pitch_two_i]
@@ -71,6 +74,8 @@ class ChordEnergizer:
         chord_one = tuple(chord_one)
         chord_two = tuple(chord_two)
 
+        if chord_one == chord_two:
+            return 999999.0
         if not chord_one in self.chordChanges:
             return 999999999.0
         if not chord_two in self.chordChanges[chord_one]:

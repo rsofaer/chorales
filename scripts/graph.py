@@ -12,7 +12,8 @@ from datetime import datetime as dt
 
 from noteToNoteProbs import probabalize
 import chordEnergy as che
-#import midiTojson
+from midify import midify
+
 
 #Global cleandata
 cleandata = json.load(open("../dataset/cleandata.json", "rb"))
@@ -44,7 +45,7 @@ class Graph():
         time1 = dt.now()
 
         self.ce = che.ChordEnergizer(data)
-        self.chord_energies = self.ce.chordCounts
+        self.chord_energies = self.ce.chordCounts #slightly misleading- gets turned from count to energy in ln 57
         self.chord_changes = self.ce.chordChanges
         self.probs = probs
         self.chords = {}
@@ -54,6 +55,7 @@ class Graph():
             i += 1
             if i%90 == 0:
                 sys.stdout.write('.')
+            #how can we do his every time ? VV
             energy = self.ce.chord_energy(chord, normed=True)
             self.chords[chord] = chordNode(self, self.ce, chord, energy, self.chord_changes.get(chord, None))
 
@@ -83,9 +85,10 @@ class chordNode():
     def next_chord(self):
 
         #Weights: alpha|E1, beta|E2, gamma|E3
-        alpha = 5#1.0
-        beta = 500.0
-        gamma = 1000000.0
+        alpha = 0.0000001
+        beta = 4.0
+        gamma = 10.5
+        delta = 1.0
 
         #Energies: E1|cnode.energy, E2|cnode.outbound_cross_e, E3|outbound_chord_e
         E1 = float("inf")
@@ -106,6 +109,10 @@ class chordNode():
                 E3 = temp3
                 best_chord = self.graph.chords[ch]
 
+        #make that chord less likely
+        self.graph.ce.chordCounts[best_chord.chord] -= delta*40
+        #also want to re-energize that chord
+        best_chord.energy = self.graph.ce.chord_energy(best_chord.chord, normed=True)
 
         return best_chord
 
@@ -132,10 +139,11 @@ def testGeneration():
     #midifile = "../dataset/fourPartChorales/039200b_.mid"
     #json_dict = midiTojson.genJson(midifile)
 
-    for chorale in data:
-        json_dict = chorale
-        break
+    #for chorale in data:
+        #json_dict = chorale
+        #break
 
+    json_dict = data[5]
     #tableify
     test_table = che.table_from_chorale(json_dict)
     g = Graph()
@@ -158,13 +166,35 @@ def testGeneration():
 
 
 
+    #write that to a midi
+    chords_to_midi(generated_sequence)
+
+
+
     total_loss = 0
 
     for i in range(len(test_table)):
-        print "loss check"
         total_loss += lossify(test_table[i], generated_sequence[i].chord)
 
-    print total_loss
+    print "total loss is: ", total_loss
+
+def chords_to_midi(chords):
+    """takes a chord sequence from generate and jsons then midis it"""
+    #first need to put it in json format (4 voices)
+    json_dict = [[],[],[],[]]
+    for st, chord in enumerate(chords):
+        c = denormalize_chord(chord.chord)
+        print c
+        for i in range(4):
+            cpitch = c[i]
+            entry = {'timesig': None, 'keysig': 0, 'tempo': 85, 'st': st*4, 'pitch': cpitch, 'dur': 4, 'fermata': 0}
+            json_dict[i].append(entry)
+
+    #print json_dict
+    #return json_dict
+
+    midify(json_dict)
+
 
 def lossify(c1, c2):
     """loss per two chords on simple euclidean distance"""
@@ -183,7 +213,6 @@ def generate(chord, length):
     l = [chord]
     for i in range(length-1):
         l.append(l[-1].next_chord())
-    print l
     return l
 
 
@@ -193,12 +222,22 @@ def tableify(l):
         l_out.append([v[i] for v in l])
     return l_out
 
+def denormalize_chord(chord):
+    """ Takes a tuple representing a chord, returns a new tuple"""
+    newChord = list(chord)
+    newChord[0] = newChord[0] + 60
+    newChord[1] = newChord[1] + 48
+    newChord[2] = newChord[2] + 48
+    newChord[3] = newChord[3] + 36
+    return tuple(newChord)
+
+
 
 if __name__ == '__main__':
+    time1 = dt.now()
     """
     g = Graph(10)
 
-    time1 = dt.now()
     #Testing next_chord()
     num = 100
     ch = 0
@@ -210,11 +249,11 @@ if __name__ == '__main__':
         chor = g.chords[c].next_chord()
         c = chor.chord
 
-    time2 = dt.now()
-    print "total time to run all ",num, ": ", time2-time1
     """
 
     testGeneration()
+    time2 = dt.now()
+    print "total time : ", time2-time1
 
 
 
