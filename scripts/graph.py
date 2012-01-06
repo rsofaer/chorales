@@ -109,9 +109,11 @@ class chordNode():
                 best_chord = self.graph.chords[ch]
 
         #make that chord less likely
-        self.graph.ce.chordCounts[best_chord.chord] -= delta*40
+        self.graph.ce.chordCounts[best_chord.chord] = 0 #-= delta*40
         #also want to re-energize that chord
+        print "before: ", best_chord.energy
         best_chord.energy = self.graph.ce.chord_energy(best_chord.chord, normed=True)
+        print "after: ", best_chord.energy
 
         return best_chord
 
