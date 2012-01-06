@@ -34,6 +34,8 @@ def midify(voices,filename='output'):
             time = note[u'st']
             #fermata is added to duration if it's 1
             duration = note[u'dur'] + (fermata*note[u'fermata'])
+            #print "bitch"
+            #print duration
             volume = 100
 
             #not dealt with: timesig, keysig

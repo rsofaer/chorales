@@ -40,7 +40,7 @@ class ChordEnergizer:
         chordString = chordStringFromList(norm_chord)
 
         if not chordString in self.chordCounts:
-            return 999999999.0
+            return 999999999
         return 1.0/self.chordCounts[chordString]
 
     def pair_energy(self, pitch_one, pitch_two):
@@ -52,7 +52,7 @@ class ChordEnergizer:
             pitch_two_i = pitch_two[pitch_key]
         copitches = self.intervalCounts[pitch_one_i]
         if not pitch_two_i in copitches:
-            return 99999999.0
+            return 99999999
         return 1.0/self.intervalCounts[pitch_one_i][pitch_two_i]
 
     def count_intervals(self):
@@ -82,11 +82,10 @@ def chorale_chords(chorale):
     table = table_from_chorale(chorale)
     for time in range(0,endTime-1):
         chordList = map(lambda v: v[time], table)
-        chord_string = chordStringFromList(chordList)
-        if not chord_string in chord_counts:
-            chord_counts[chord_string] = 0
-        chord_counts[chord_string] += 1
-    
+        chord_tuple = tuple(chordList)
+        if not chord_tuple in chord_counts:
+            chord_counts[chord_tuple ] = 0
+        chord_counts[chord_tuple] += 1
     return chord_counts
 
 def table_from_chorale(chorale):
