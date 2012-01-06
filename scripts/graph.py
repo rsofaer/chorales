@@ -37,9 +37,19 @@ The chords that each Graph object hold look like this:
     SCRAP DAT
 
     here:
-    {
 
-    }
+    object layout for:
+        graph = [cnode, cnode, cnode]
+
+        cnode{
+            self.chord = (1,2,3,4)
+            self.energy = .93 (this is the inherent energy for the chord)
+            self.outbound = {(some, other, chord, 5) : <number of times that chord happens after this one>, (yet, another, chord): .234, etc}
+            self.outbound_cross_e = {(some, other, chord, 5) : <energy for this chord pair from note_to_note>, (yet, another, chord): .234, etc}
+            self.outbound_chord_e = {(some, other, chord, 5) : <energy for this chord pair from chordEnergizer>, (yet, another, chord): .234, etc}
+        }
+
+
 """
 class Graph():
     """ holds a list of all chord nodes"""
@@ -57,7 +67,7 @@ class Graph():
             i += 1
             if i%90 == 0:
                 sys.stdout.write('.')
-            self.chords.append(chordNode(chord, energy, self.chord_changes.get(chord, None)))
+            self.chords.append(chordNode(self.ce, chord, energy, self.chord_changes.get(chord, None)))
 
         time2 = dt.now()
         print ""
@@ -85,16 +95,20 @@ class Graph():
 
 class chordNode():
     """Has a chord, a number of incoming energies and a node energy """
-    def __init__(self, chord, energy, outbound):
+    def __init__(self, chord_energizer, chord, energy, outbound):
         self.chord = chord
+        print self.chord
         self.energy = energy
-        #outbound is a list of all following chords and the energies to go from one to the next
+        #outbound is a dict of all following chords and the energies to go from one to the next
         assert(outbound)
         self.outbound = outbound
-        self.outbound_e = {}
+        self.outbound_cross_e = {}
+        self.outbound_chord_e = {}
         for other in outbound:
             cross_e = cross_energy(self.chord, other)
-            self.outbound_e[other] = cross_energy
+            chord_to_chord_energy = chord_energizer.chord_pair_energy(self.chord, other)
+            self.outbound_cross_e[other] = cross_energy
+            self.outbound_chord_e[other] = chord_to_chord_energy
 
 
 
