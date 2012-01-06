@@ -35,9 +35,10 @@ class Graph():
     def __init__(self, duration= 40):
         self.ce = ChordEnergizer(data)
         self.chord_energies = self.ce.chordCounts
-        print self.chord_energies
+        #print self.chord_energies
         self.probs = probs
         self.chords = []
+        print len(self.chord_energies)
 
         for chord, energy in self.chord_energies.iteritems():
             self.chords.append(chordNode(chord, energy,self))
@@ -49,10 +50,12 @@ class chordNode():
         self.energy = energy
         #outbound is a list of all following chords and the energies to go from one to the next
         self.outbound = []
+        """
         for other in graph.chord_energies:
             print "here is the other!"
             print other
             self.outbound.append((other, cross_energy(self.chord, other)))
+        """
 
 
 
@@ -67,14 +70,26 @@ class layer():
 def cross_energy(origin, outbound):
     """returns an energy for going from one chord to the other based on note-likelihood for each voice"""
     total_energy = 0
-    for i in range(4):
+    for i in range(len(origin)):
         voice = {3: "bass", 2: "tenor", 1: "alto", 0: "soprano"}[i]
-        print probs[voice]
         print origin
-        print origin[i]
-        print probs[voice][int(origin[i])]
-        energy = 1/probs[voice][int(origin[i])][int(outbound[i])]
-        print energy
+        #TODO how to deal with <4 voices?
+        #print probs[voice]
+        #print origin
+        #print origin[i]
+        #print probs[voice][int(origin[i])]
+        print "V_V_VV__V__V"
+        print "origin :: ", origin
+        print "outbound :: ", outbound
+        print "i :: ", i
+        print probs[voice]
+        if len(outbound) > i:
+            energy = 1/float(probs[voice][int(origin[i])].get(int(outbound[i]), 0.00000000001))
+        else:
+            #print i
+            #print outbound
+            energy = 1/float(probs[voice][int(origin[i])].get(int(outbound[0]), 0.00000000001))
+            print energy
         #origin[i] VS outbound[i]
         #get occurence from probabalize (ln 43) add 1/ occ[v][origin[i][outbound[i]]
         total_energy += energy

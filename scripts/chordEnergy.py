@@ -96,7 +96,7 @@ def chorale_chords(chorale):
                 if not activeNote == None:
                     chordList.append(activeNote[pitch_key])
 
-        chord_string = chordStringFromList(chordList)
+        #chord_string = chordStringFromList(chordList)
         chord_tuple = tuple(chordList)
         if not chord_tuple in chord_counts:
             chord_counts[chord_tuple] = 0
