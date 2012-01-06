@@ -73,25 +73,9 @@ class Graph():
         print ""
         print "total time to load", len(self.chords),  " chords was: ", time2-time1
 
-        print self.chord_energies
-        print self.chord_changes
-        print self.probs
-        print self.chords
-
-    #given a chord, go through energies and determine the next chord
-    def next_chord(chord):
-        E1 = float("inf")
-        E2 = float("inf")
-        best_chord = None
-        for cn, prob in chord.outbound: #maybe enumerate
-            temp1 = prob
-            temp2 = cn #look up chord energy in graph
-            if temp1 + temp2 < E1 + E2:
-                E1 = temp1
-                E2 = temp2
-                #probably only need one sum
-                best_chord = cn
-        return best_chord
+        for c in chord:
+            c.next_chord(self)
+            break
 
 class chordNode():
     """Has a chord, a number of incoming energies and a node energy """
@@ -110,6 +94,23 @@ class chordNode():
             self.outbound_cross_e[other] = cross_energy
             self.outbound_chord_e[other] = chord_to_chord_energy
 
+            
+    #instance method, give it a graph,, go through energies and determine the next chord
+    def next_chord(self, g):
+        print 'SUMMON'
+        E1 = float("inf")
+        E2 = float("inf")
+        E3 = float("inf")
+        best_chord = None
+        for cn, prob in chord.outbound: #maybe enumerate
+            temp1 = prob
+            temp2 = cn #look up chord energy in graph
+            if temp1 + temp2 < E1 + E2:
+                E1 = temp1
+                E2 = temp2
+                #probably only need one sum
+                best_chord = cn
+        return best_chord
 
 
 #most likely this piece is not needed VV
