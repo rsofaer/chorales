@@ -80,7 +80,7 @@ class chordNode():
 
 
     #instance method, give it a graph,, go through energies and determine the next chord
-    def next_chord(self, g):
+    def next_chord(self):
 
         #Weights: alpha|E1, beta|E2, gamma|E3
         alpha = 1.0
@@ -91,12 +91,12 @@ class chordNode():
         E1 = float("inf")
         E2 = float("inf")
         E3 = float("inf")
-
-        best_chord = None #not yet!
+        
+        best_chord = None # ...yet!
 
         for ch in self.outbound:
 
-            temp1 = g.chords[ch].energy #the energy of the chord
+            temp1 = self.graph.chords[ch].energy #the energy of the chord
             temp2 = self.outbound_cross_e[ch]
             temp3 = self.outbound_chord_e[ch]
 
@@ -104,7 +104,7 @@ class chordNode():
                 E1 = temp1
                 E2 = temp2
                 E3 = temp3
-                best_chord = g.chords[ch]
+                best_chord = self.graph.chords[ch]
 
 
         return best_chord
@@ -156,23 +156,33 @@ def lossify(c1, c2):
 
     return total
 
+#returns the list of generated chords
+def generate(chord, length):
+    #assuming chord is a cnode!!
+    l = [chord]
+    for i in range(length-1):
+        l.append(l[-1].next_chord())
+    return l
 
 
 if __name__ == '__main__':
-    time1 = dt.now()
     g = Graph(10)
 
+    time1 = dt.now()
     #Testing next_chord()
-    count = 0
+    num = 100
+    ch = 0
     for c in g.chords:
+        ch = c
+        break
+    for i in range(num):
+        print "The best chord to follow",c,"is",g.chords[c].next_chord().chord
+        chor = g.chords[c].next_chord()
+        c = chor.chord
 
-        print "The best chord to follow",c,"is",g.chords[c].next_chord(g).chord
-        if count == 100:
-            break
-        else:
-            count += 1
     time2 = dt.now()
-    print "total time to run all ",count, ": ", time2-time1
+    print "total time to run all ",num, ": ", time2-time1
+
 
 
 
