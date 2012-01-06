@@ -17,11 +17,9 @@ class TestMidiJSON(unittest.TestCase):
         newJsonDict = midiTojson.genJson("../dataset/midi/" + miditempfile + ".mid")
         #remidify
         midify.midify(newJsonDict, miditempfile2)
-        """
         print jsonDict
         print "_V"*40
         print newJsonDict
-        """
         for i in range(0,len(newJsonDict)-1):
             for j in range(0, len(newJsonDict[i])-1):
                 if not newJsonDict[i][j]["pitch"] == jsonDict[i][j]["pitch"]:
