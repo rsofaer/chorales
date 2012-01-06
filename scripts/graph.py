@@ -57,7 +57,9 @@ class chordNode():
         for other in graph.chord_energies:
             print "here is the other!"
             print other
-            self.outbound.append((other, cross_energy(self.chord, other)))
+            cross_e = cross_energy(self.chord, other)
+            if cross_e > X :
+                self.outbound.append((other, cross_energy))
         """
 
 
