@@ -11,8 +11,8 @@ import sys
 from datetime import datetime as dt
 
 from noteToNoteProbs import probabalize
-import chordEnergy
-import midjiTojson
+import chordEnergy as che
+import midiTojson
 
 #Global cleandata
 cleandata = json.load(open("../dataset/cleandata.json", "rb"))
@@ -43,7 +43,7 @@ class Graph():
     def __init__(self, duration= 40):
         time1 = dt.now()
 
-        self.ce = ChordEnergizer(data)
+        self.ce = che.ChordEnergizer(data)
         self.chord_energies = self.ce.chordCounts
         self.chord_changes = self.ce.chordChanges
         self.probs = probs
@@ -91,7 +91,7 @@ class chordNode():
         E1 = float("inf")
         E2 = float("inf")
         E3 = float("inf")
-        
+
         best_chord = None # ...yet!
 
         for ch in self.outbound:
@@ -128,26 +128,45 @@ def cross_energy(origin, outbound):
 def testGeneration():
     """take a midi of an original chorale, table-fy it, take first chord, generate a new table from our energies, compare"""
     #will return a loss for the specific values of alpha beta gamma (sorority?)
-    midifile = "../dataset/fourPartChorales/039200b_.mid"
-    json_dict = midiTojson.genJson(midifile)
+    print "starting the test"
+    #midifile = "../dataset/fourPartChorales/039200b_.mid"
+    #json_dict = midiTojson.genJson(midifile)
+
+    for chorale in data:
+        json_dict = chorale
+        break
+
     #tableify
-    test_table = chordEnergy.table_from_chorale(json_dict)
+    test_table = che.table_from_chorale(json_dict)
     g = Graph()
 
-    first_chord = table[0]
-    first_chord = g.chords.get(first_chord)
-    assert(first_chord)
+    endTime = che.chorale_end_time(json_dict)
+    for time in range(0,endTime-1):
+        chordList = map(lambda v: v[time], test_table)
+        first_chord = tuple(chordList)
+        break
 
-    generated_sequence = generate(first_chord, len(table))
+    #first_chord = test_table[0]
+    print first_chord
+    first_chord = g.chords.get(tuple(first_chord))
+    assert (first_chord)
 
+    print "generate!"
+    generated_sequence = generate(first_chord, len(test_table))
+
+
+    #flip test_table
+    test_table = tableify(test_table)
     total_loss = 0
-    for i in range(len(table)):
-        total_loss += lossify(table[i], generated_sequence[i])
+    for i in range(len(test_table)):
+        print "loss check"
+        total_loss += lossify(test_table[i], generated_sequence[i].chord)
 
     print total_loss
 
 def lossify(c1, c2):
     """loss per two chords on simple euclidean distance"""
+
     total = 0
     for i in range(len(c1)):
         total +=(abs(c1[i] - c2[i]) if c1[i] != None and c2[i] != None else 0)
@@ -166,6 +185,7 @@ def generate(chord, length):
 
 
 if __name__ == '__main__':
+    """
     g = Graph(10)
 
     time1 = dt.now()
@@ -182,7 +202,9 @@ if __name__ == '__main__':
 
     time2 = dt.now()
     print "total time to run all ",num, ": ", time2-time1
+    """
 
+    testGeneration()
 
 
 
