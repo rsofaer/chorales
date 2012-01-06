@@ -43,6 +43,23 @@ class Graph():
         for chord, energy in self.chord_energies.iteritems():
             self.chords.append(chordNode(chord, energy,self))
 
+
+
+    #given a chord, go through energies and determine the next chord
+    def next_chord(chord):
+        E1 = float("inf")
+        E2 = float("inf")
+        best_chord = None
+        for cn, prob in chord.outbound: #maybe enumerate
+            temp1 = prob
+            temp2 = cn #look up chord energy in graph
+            if temp1 + temp2 < E1 + E2:
+                E1 = temp1
+                E2 = temp2
+                #probably only need one sum
+                best_chord = cn
+        return best_chord
+
 class chordNode():
     """Has a chord, a number of incoming energies and a node energy """
     def __init__(self, chord, energy, graph):
@@ -50,6 +67,8 @@ class chordNode():
         self.energy = energy
         #outbound is a list of all following chords and the energies to go from one to the next
         self.outbound = []
+        #outbound should be the lookup
+        #
         """
         This is what crashes:
 
@@ -71,6 +90,9 @@ class layer():
         self.chords = []
         #for chord in chord_list:
             #self.chords.append(chordNode(chord))
+
+
+
 
 def cross_energy(origin, outbound):
     """returns an energy for going from one chord to the other based on note-likelihood for each voice"""
