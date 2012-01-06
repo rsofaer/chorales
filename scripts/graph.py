@@ -7,6 +7,8 @@ Description: created a directed graph of energy-weighted chords
 '''
 
 import json
+import sys
+from datetime import datetime as dt
 
 from noteToNoteProbs import probabalize
 from chordEnergy import ChordEnergizer
@@ -28,20 +30,39 @@ The chords that each Graph object hold look like this:
         ((1,2,3,4), energyOfChord) : {dictionary of "next possible chords/costs"},
         ((3,2,3,4), energyOfChord) : {dictionary of "next possible chords/costs"},
         ((4,2,3,4), energyOfChord) : {dictionary of "next possible chords/costs"}
+
+
+    }
+
+    SCRAP DAT
+
+    here:
+    {
+
     }
 """
 class Graph():
     """ holds a list of all chord nodes"""
     def __init__(self, duration= 40):
+        time1 = dt.now()
+
         self.ce = ChordEnergizer(data)
         self.chord_energies = self.ce.chordCounts
-        #print self.chord_energies
+        self.chord_changes = self.ce.chordChanges
         self.probs = probs
         self.chords = []
-        print len(self.chord_energies)
-
+        print "Adding chords"
+        i = 0
         for chord, energy in self.chord_energies.iteritems():
-            self.chords.append(chordNode(chord, energy,self))
+            i += 1
+            if i%90 == 0:
+                sys.stdout.write('.')
+            self.chords.append(chordNode(chord, energy, self.chord_changes.get(chord, None)))
+
+        time2 = dt.now()
+        print ""
+        print "total time to load", len(self.chords),  " chords was: ", time2-time1
+
 
 
 
@@ -62,24 +83,18 @@ class Graph():
 
 class chordNode():
     """Has a chord, a number of incoming energies and a node energy """
-    def __init__(self, chord, energy, graph):
+    def __init__(self, chord, energy, outbound):
         self.chord = chord
         self.energy = energy
         #outbound is a list of all following chords and the energies to go from one to the next
-        self.outbound = []
-        #outbound should be the lookup
-        #
-        """
-        This is what crashes:
 
-
-        for other in graph.chord_energies:
-            print "here is the other!"
-            print other
+        assert(outbound)
+        #choose this line OR the commented out section based on if you want the cross_energy included
+        self.outbound = outbound
+        self.outbound_e = {}
+        for other in outbound:
             cross_e = cross_energy(self.chord, other)
-            if cross_e > X :
-                self.outbound.append((other, cross_energy))
-        """
+            self.outbound_e[other] = cross_energy
 
 
 
@@ -99,24 +114,15 @@ def cross_energy(origin, outbound):
     total_energy = 0
     for i in range(len(origin)):
         voice = {3: "bass", 2: "tenor", 1: "alto", 0: "soprano"}[i]
-        print origin
-        #TODO how to deal with <4 voices?
-        #print probs[voice]
-        #print origin
-        #print origin[i]
-        #print probs[voice][int(origin[i])]
-        print "V_V_VV__V__V"
-        print "origin :: ", origin
-        print "outbound :: ", outbound
-        print "i :: ", i
-        print probs[voice]
+        if not origin[i] or not outbound[i]:
+            continue
         if len(outbound) > i:
             energy = 1/float(probs[voice][int(origin[i])].get(int(outbound[i]), 0.00000000001))
         else:
             #print i
             #print outbound
             energy = 1/float(probs[voice][int(origin[i])].get(int(outbound[0]), 0.00000000001))
-            print energy
+            #print energy
         #origin[i] VS outbound[i]
         #get occurence from probabalize (ln 43) add 1/ occ[v][origin[i][outbound[i]]
         total_energy += energy
