@@ -54,7 +54,7 @@ class Graph():
             if i%90 == 0:
                 sys.stdout.write('.')
             energy = self.ce.chord_energy(chord, normed=True)
-            self.chords[chord] = chordNode(self.ce, chord, energy, self.chord_changes.get(chord, None))
+            self.chords[chord] = chordNode(self, self.ce, chord, energy, self.chord_changes.get(chord, None))
 
         time2 = dt.now()
         print ""
@@ -62,7 +62,8 @@ class Graph():
 
 class chordNode():
     """Has a chord, a number of incoming energies and a node energy """
-    def __init__(self, chord_energizer, chord, energy, outbound):
+    def __init__(self, graph, chord_energizer, chord, energy, outbound):
+        self.graph = graph
         self.chord = chord
         self.energy = energy
         #outbound is a dict of all following chords and the energies to go from one to the next
@@ -132,6 +133,12 @@ def cross_energy(origin, outbound):
             energy = 1/float(probs[voice][int(origin[i])].get(int(outbound[0]), 0.00000000001))
         total_energy += energy
     return total_energy
+
+
+def testGeneration():
+    """take a midi of an original chorale, table-fy it, take first chord, generate a new table from our energies, compare"""
+    #will return a loss for the specific values of alpha beta gamma (sorority?)
+
 
 
 
