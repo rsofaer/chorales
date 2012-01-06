@@ -44,7 +44,7 @@ class Graph():
         time1 = dt.now()
 
         self.ce = che.ChordEnergizer(data)
-        self.chord_energies = self.ce.chordCounts
+        self.chord_energies = self.ce.chordCounts #slightly misleading- gets turned from count to energy in ln 57
         self.chord_changes = self.ce.chordChanges
         self.probs = probs
         self.chords = {}
@@ -136,7 +136,7 @@ def testGeneration():
         #json_dict = chorale
         #break
 
-    json_dict = data[4]
+    json_dict = data[5]
     #tableify
     test_table = che.table_from_chorale(json_dict)
     g = Graph()
@@ -156,6 +156,8 @@ def testGeneration():
     #flip test_table
     test_table = tableify(test_table)
     generated_sequence = generate(first_chord, len(test_table))
+
+
 
     #write that to a midi
     chords_to_midi(generated_sequence)
