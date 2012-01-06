@@ -12,7 +12,6 @@ from datetime import datetime as dt
 
 from noteToNoteProbs import probabalize
 import chordEnergy as che
-import midiTojson
 
 #Global cleandata
 cleandata = json.load(open("../dataset/cleandata.json", "rb"))
@@ -83,9 +82,9 @@ class chordNode():
     def next_chord(self):
 
         #Weights: alpha|E1, beta|E2, gamma|E3
-        alpha = 1.0
-        beta = 1.0
-        gamma = 1.0
+        alpha = 0.0000001
+        beta = 4000000.0
+        gamma = 1000000000.5
 
         #Energies: E1|cnode.energy, E2|cnode.outbound_cross_e, E3|outbound_chord_e
         E1 = float("inf")
@@ -161,10 +160,9 @@ def testGeneration():
     total_loss = 0
 
     for i in range(len(test_table)):
-        print "loss check"
         total_loss += lossify(test_table[i], generated_sequence[i].chord)
 
-    print total_loss
+    print "total loss is: ", total_loss
 
 def lossify(c1, c2):
     """loss per two chords on simple euclidean distance"""
@@ -183,7 +181,6 @@ def generate(chord, length):
     l = [chord]
     for i in range(length-1):
         l.append(l[-1].next_chord())
-    print l
     return l
 
 
@@ -195,10 +192,10 @@ def tableify(l):
 
 
 if __name__ == '__main__':
+    time1 = dt.now()
     """
     g = Graph(10)
 
-    time1 = dt.now()
     #Testing next_chord()
     num = 100
     ch = 0
@@ -210,11 +207,11 @@ if __name__ == '__main__':
         chor = g.chords[c].next_chord()
         c = chor.chord
 
-    time2 = dt.now()
-    print "total time to run all ",num, ": ", time2-time1
     """
 
     testGeneration()
+    time2 = dt.now()
+    print "total time : ", time2-time1
 
 
 
