@@ -184,6 +184,13 @@ def generate(chord, length):
     return l
 
 
+def tableify(l):
+    l_out = []
+    for i in range(len(l)):
+        l_out.append([v[i] for v in l])
+    return l_out
+
+
 if __name__ == '__main__':
     """
     g = Graph(10)
