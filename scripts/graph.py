@@ -71,7 +71,6 @@ class chordNode():
         self.energy = energy
         #outbound is a list of all following chords and the energies to go from one to the next
         assert(outbound)
-        #choose this line OR the commented out section based on if you want the cross_energy included
         self.outbound = outbound
         self.outbound_e = {}
         for other in outbound:
