@@ -29,6 +29,9 @@ class TestChordEnergy(unittest.TestCase):
 
         self.assertTrue(self.ce.sum_pair_energy([0,1,2,3]) == self.ce.sum_pair_energy([{e.pitch_key: 0},{e.pitch_key: 1},{e.pitch_key: 2},{e.pitch_key: 3}]))
         self.assertTrue(self.ce.chord_energy([0,1,2,3]) == self.ce.chord_energy([{e.pitch_key: 0},{e.pitch_key: 1},{e.pitch_key: 2},{e.pitch_key: 3}]))
+        self.assertTrue(self.ce.chord_pair_energy([0,1,2,3],[1,2,3,4]) == 
+                        self.ce.chord_pair_energy([{e.pitch_key: 0},{e.pitch_key: 1},{e.pitch_key: 2},{e.pitch_key: 3}],
+                                                  [{e.pitch_key: 1},{e.pitch_key: 2},{e.pitch_key: 3},{e.pitch_key: 4}]))
 
 if __name__ == '__main__':
     unittest.main()

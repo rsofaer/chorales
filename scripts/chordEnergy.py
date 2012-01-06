@@ -54,8 +54,24 @@ class ChordEnergizer:
             pitch_two_i = pitch_two[pitch_key]
         copitches = self.intervalCounts[pitch_one_i]
         if not pitch_two_i in copitches:
-            return 99999999
+            return 99999999.0
         return 1.0/self.intervalCounts[pitch_one_i][pitch_two_i]
+
+    def chord_pair_energy(self, chord_one, chord_two):
+        if type(chord_one[0]) == dict:
+            f = lambda n: n[pitch_key]
+            chord_one = map(f, chord_one)
+            chord_two = map(f, chord_two)
+        chord_one = tuple(chord_one)
+        chord_two = tuple(chord_two)
+
+        if not chord_one in self.chordChanges:
+            return 999999999.0
+        if not chord_two in self.chordChanges[chord_one]:
+            return 9999999.0
+        return 1.0/self.chordChanges[chord_one][chord_two]
+
+
 
     def count_intervals(self):
         total_copitch_map = {}
