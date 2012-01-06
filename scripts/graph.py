@@ -12,7 +12,7 @@ from datetime import datetime as dt
 
 from noteToNoteProbs import probabalize
 import chordEnergy as che
-import midiTojson
+#import midiTojson
 
 #Global cleandata
 cleandata = json.load(open("../dataset/cleandata.json", "rb"))
@@ -83,9 +83,9 @@ class chordNode():
     def next_chord(self):
 
         #Weights: alpha|E1, beta|E2, gamma|E3
-        alpha = 1.0
-        beta = 1.0
-        gamma = 1.0
+        alpha = 5#1.0
+        beta = 500.0
+        gamma = 1000000.0
 
         #Energies: E1|cnode.energy, E2|cnode.outbound_cross_e, E3|outbound_chord_e
         E1 = float("inf")
