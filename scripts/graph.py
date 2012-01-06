@@ -152,12 +152,14 @@ def testGeneration():
     assert (first_chord)
 
     print "generate!"
+    #flip test_table
+    test_table = tableify(test_table)
     generated_sequence = generate(first_chord, len(test_table))
 
 
-    #flip test_table
-    test_table = tableify(test_table)
+
     total_loss = 0
+
     for i in range(len(test_table)):
         print "loss check"
         total_loss += lossify(test_table[i], generated_sequence[i].chord)
@@ -181,12 +183,13 @@ def generate(chord, length):
     l = [chord]
     for i in range(length-1):
         l.append(l[-1].next_chord())
+    print l
     return l
 
 
 def tableify(l):
     l_out = []
-    for i in range(len(l)):
+    for i in range(len(l[0])):
         l_out.append([v[i] for v in l])
     return l_out
 
