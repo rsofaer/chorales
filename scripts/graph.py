@@ -44,6 +44,52 @@ def record_prog_stats(data):
     #print progressions.values()
     return progressions
 
+#last_chord must be cnode to get graph!
+def end_chorale(last_chord):
+    #print ending_progressions
+    best_e = float("inf")
+    best_ch = None #..yet!
+    for key, value in ending_progressions.iteritems():
+        temp_e = get_energy(tuple([last_chord.chord])+key, last_chord.graph)
+        if temp_e < best_e:
+            best_e = temp_e
+            best_ch = key
+    #print best_e
+    return best_ch
+
+def get_energy(ll,g):
+    alpha = 0.0000001
+    beta = 4.0
+    gamma = 10.5
+    delta = 0.0000001
+    
+    total_e = 0
+
+    ##SOMETIMES THERE ARE CHORDS IN HERE THAT ARE NOT IN G.CHORDS
+    ##CANT EXPLAIN THAT (ALIENS)
+    l = [g.chords[x] if x in g.chords else "FUCK" for x in ll]
+    if "FUCK" in l:
+        #print "FUCK'D"
+        return float("inf")
+
+
+    #first cnode is the last chord of the generated chorale
+    #delta = 0.0 #how much to weigh the occurrences
+    for index, chord in enumerate(l):
+
+        #current chord's energy
+        total_e += alpha*chord.energy
+        #cross entropy
+        if(index+1 < len(l)):
+            total_e += beta*chord.outbound_cross_e[l[index+1].chord] if l[index+1].chord in chord.outbound_cross_e else float("inf")
+        #next chord energy
+        if(index+1 < len(l)):
+            total_e += gamma*chord.outbound_chord_e[l[index+1].chord] if l[index+1].chord in chord.outbound_chord_e else float("inf")
+        
+    total_e += delta*1.0/ending_progressions[ll[1:]]
+    #print total_e
+    return total_e
+
 ending_progressions = record_prog_stats(data)
 probs = probabalize(cleandata)
 
@@ -193,7 +239,6 @@ def testGeneration():
     generated_sequence = generate(first_chord, 50)
 
 
-
     #write that to a midi
     chords_to_midi(generated_sequence)
 
@@ -246,8 +291,24 @@ def lossify(c1, c2):
 def generate(chord, length):
     #assuming chord is a cnode!!
     l = [chord]
-    for i in range(length-1):
+    #Minus 1 because we have a starting chord
+    #Minus 16 to append the ending
+    for i in range(length-1-16):
         l.append(l[-1].next_chord())
+    
+    #Append ending
+
+    #example of bitch that doesn't work
+    #print (4, None, None, None) in g.chords #False
+    #print (4, None, None, None) in g.chord_changes #TRUE?! Aliens.
+
+
+    end = end_chorale(l[-1])
+
+    print "End Chorale:\n", end
+    
+    l.extend([chord.graph.chords[x] for x in end])
+
     return l
 
 
@@ -281,6 +342,7 @@ if __name__ == '__main__':
 
     """
 
+    
     testGeneration()
     time2 = dt.now()
     print "total time : ", time2-time1
