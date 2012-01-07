@@ -98,7 +98,7 @@ class ChordEnergizer:
         total_chord_change_map = {}
         previous_moment = None
         for table in self.tables:
-            for time in range(1, len(table[0])):
+            for time in range(0, len(table[0])):
                 moment = tuple(map(lambda v: v[time], table))
                 if not previous_moment in total_chord_change_map:
                     total_chord_change_map[previous_moment] = {}
