@@ -41,7 +41,7 @@ def record_prog_stats(data):
         last_prog= tuple([tuple(i) for i in table[-16:]])
         progressions[last_prog] = progressions.get(last_prog, 0) + 1
 
-    print progressions.values()
+    #print progressions.values()
     return progressions
 
 ending_progressions = record_prog_stats(data)
@@ -135,9 +135,9 @@ class chordNode():
         #make that chord less likely
         self.graph.ce.chordCounts[best_chord.chord] *= delta
         #also want to re-energize that chord
-        print "before: ", best_chord.energy
+        #print "before: ", best_chord.energy
         best_chord.energy = self.graph.ce.chord_energy(best_chord.chord, normed=True)
-        print "after: ", best_chord.energy
+        #print "after: ", best_chord.energy
 
         return best_chord
 
@@ -188,7 +188,7 @@ def testGeneration():
     print "generate!"
     #flip test_table
     test_table = tableify(test_table)
-    first_chord = test_table[0]
+    first_chord = g.chords.get(tuple(test_table[0]))
     assert (first_chord)
     generated_sequence = generate(first_chord, 50)
 
