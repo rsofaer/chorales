@@ -17,14 +17,36 @@ from midify import midify
 
 #Global cleandata
 cleandata = json.load(open("../dataset/cleandata.json", "rb"))
-#chord_list = json.loads(open("../dataset/chord_list", "rb"))
 
-data = cleandata.values()
 def hasKeySig(chorale):
     return not chorale[0][0]["keysig"] == None
 
+#Global list of cleandata.values with a keysig
+data = cleandata.values()
 data = filter(hasKeySig, data)
+
+def tableify(l):
+    l_out = []
+    for i in range(len(l[0])):
+        l_out.append([v[i] for v in l])
+    return l_out
+
+
+def record_prog_stats(data):
+
+    progressions = {} #ending progressions
+    for chorale in data:
+        table = che.table_from_chorale(chorale)
+        table = tableify(table)
+        last_prog= tuple([tuple(i) for i in table[-16:]])
+        progressions[last_prog] = progressions.get(last_prog, 0) + 1
+
+    print progressions.values()
+    return progressions
+
+ending_progressions = record_prog_stats(data)
 probs = probabalize(cleandata)
+
 """
     object layout for:
         graph = {chord : cnode, chord : cnode, chord : cnode}
@@ -151,20 +173,23 @@ def testGeneration():
     test_table = che.table_from_chorale(json_dict)
     g = Graph()
 
+    """
     endTime = che.chorale_end_time(json_dict)
     for time in range(0,endTime-1):
         chordList = map(lambda v: v[time], test_table)
         first_chord = tuple(chordList)
         break
+    """
 
     #first_chord = test_table[0]
-    print first_chord
-    first_chord = g.chords.get(tuple(first_chord))
-    assert (first_chord)
+    #print first_chord
+    #first_chord = g.chords.get(tuple(first_chord))
 
     print "generate!"
     #flip test_table
     test_table = tableify(test_table)
+    first_chord = test_table[0]
+    assert (first_chord)
     generated_sequence = generate(first_chord, 50)
 
 
@@ -225,12 +250,6 @@ def generate(chord, length):
         l.append(l[-1].next_chord())
     return l
 
-
-def tableify(l):
-    l_out = []
-    for i in range(len(l[0])):
-        l_out.append([v[i] for v in l])
-    return l_out
 
 def denormalize_chord(chord):
     """ Takes a tuple representing a chord, returns a new tuple"""

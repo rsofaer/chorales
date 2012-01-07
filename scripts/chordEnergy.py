@@ -134,6 +134,8 @@ def table_from_chorale(chorale):
         voice_row = list(base_list)
         noteCounter = 0
         for time in range(0, end_time):
+            if not voice[noteCounter].get('norm_pitch'):
+                voice[noteCounter] = normalizer.normalize(voice[noteCounter])
             if noteActiveAt(voice[noteCounter], time):
                 voice_row[time] = voice[noteCounter][pitch_key]
             else:
@@ -141,6 +143,8 @@ def table_from_chorale(chorale):
                     noteCounter += 1
                     if noteCounter >= len(voice):
                         break
+                if not voice[noteCounter].get('norm_pitch'):
+                    voice[noteCounter] = normalizer.normalize(voice[noteCounter])
                 if noteActiveAt(voice[noteCounter], time):
                     voice_row[time] = voice[noteCounter][pitch_key]
         table.append(voice_row)
