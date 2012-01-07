@@ -111,6 +111,7 @@ class chordNode():
 
         #make that chord less likely
 
+        print best_chord.energy
         self.graph.ce.chordCounts[best_chord.chord] *= delta
         #also want to re-energize that chord
         best_chord.energy = self.graph.ce.chord_energy(best_chord.chord, normed=True)
@@ -183,23 +184,16 @@ def chords_to_midi(chords):
     """takes a chord sequence from generate and jsons then midis it"""
     #first need to put it in json format (4 voices)
     json_dict = [[],[],[],[]]
-    note_template = {'timesig': None, 'keysig': 0, 'tempo': 90, 'st': 0, 'pitch': None, 'dur': 0, 'fermata': 0}
-    
-    chords = map(lambda c: denormalize_chord(c.chord), chords)
+    for st, chord in enumerate(chords):
+        c = denormalize_chord(chord.chord)
+        print c
+        for i in range(4):
+            cpitch = c[i]
+            entry = {'timesig': None, 'keysig': 0, 'tempo': 85, 'st': st*4, 'pitch': cpitch, 'dur': 4, 'fermata': 0}
+            json_dict[i].append(entry)
 
-    for voice in range(len(chords[0])):
-        cur_note = note_template.copy()
-        cur_note['pitch'] = chords[0][voice]
-        for time in range(0, len(chords)):
-            if chords[time][voice] == cur_note['pitch']:
-               cur_note['dur'] += 4
-            else:
-               json_dict[voice].append(cur_note)
-               cur_note = note_template.copy()
-               cur_note['st'] = time*4
-               cur_note['pitch'] = chords[time][voice]
-               cur_note['dur'] = 4
-        json_dict[voice].append(cur_note)
+    #print json_dict
+    #return json_dict
 
     midify(json_dict)
 
