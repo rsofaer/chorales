@@ -67,9 +67,9 @@ def get_energy(ll,g):
 
     ##SOMETIMES THERE ARE CHORDS IN HERE THAT ARE NOT IN G.CHORDS
     ##CANT EXPLAIN THAT (ALIENS)
-    l = [g.chords[x] if x in g.chords else "FUCK" for x in ll]
-    if "FUCK" in l:
-        #print "FUCK'D"
+    l = [g.chords[x] if x in g.chords else "PWN" for x in ll]
+    if "PWN" in l:
+        #print "PWN'D"
         return float("inf")
 
 
